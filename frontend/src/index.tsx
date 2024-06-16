@@ -6,6 +6,7 @@ import "rc-slider/assets/index.css";
 import "./styles/index.scss";
 import "./index.css";
 import "./fonts/line-awesome-1.3.0/css/line-awesome.css";
+import { FirebaseProvider } from './context/firebase';
 
 //
 import App from "./App";
@@ -17,7 +18,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   // <React.StrictMode>
-  <App />
+  <FirebaseProvider>
+    <App />
+  </FirebaseProvider>
   // </React.StrictMode>
 );
 

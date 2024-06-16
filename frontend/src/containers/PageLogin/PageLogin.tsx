@@ -1,35 +1,43 @@
-import React, { FC } from "react";
-import facebookSvg from "images/Facebook.svg";
-import twitterSvg from "images/Twitter.svg";
+import React, { FC, useState } from "react";
 import googleSvg from "images/Google.svg";
 import { Helmet } from "react-helmet";
 import Input from "shared/Input/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
+import { useFirebase } from '../../context/firebase';
 
 export interface PageLoginProps {
   className?: string;
 }
 
-const loginSocials = [
-  {
-    name: "Continue with Facebook",
-    href: "#",
-    icon: facebookSvg,
-  },
-  {
-    name: "Continue with Twitter",
-    href: "#",
-    icon: twitterSvg,
-  },
-  {
-    name: "Continue with Google",
-    href: "#",
-    icon: googleSvg,
-  },
-];
-
 const PageLogin: FC<PageLoginProps> = ({ className = "" }) => {
+  const navigate = useNavigate();
+  const firebase = useFirebase();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await firebase.signinUser(email, password);
+      console.log('Login successful');
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error logging in:', error.message);
+    }
+  };
+
+  const handleLoginWithGoogle = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    try {
+      await firebase.signinWithGoogle();
+      console.log('Login with Google successful');
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error logging in with Google:', error.message);
+    }
+  };
+
   return (
     <div className={`nc-PageLogin ${className}`} data-nc-id="PageLogin">
       <Helmet>
@@ -41,22 +49,19 @@ const PageLogin: FC<PageLoginProps> = ({ className = "" }) => {
         </h2>
         <div className="max-w-md mx-auto space-y-6">
           <div className="grid gap-3">
-            {loginSocials.map((item, index) => (
-              <a
-                key={index}
-                href={item.href}
-                className="nc-will-change-transform flex w-full rounded-lg bg-primary-50 dark:bg-neutral-800 px-4 py-3 transform transition-transform sm:px-6 hover:translate-y-[-2px]"
-              >
-                <img
-                  className="flex-shrink-0"
-                  src={item.icon}
-                  alt={item.name}
-                />
-                <h3 className="flex-grow text-center text-sm font-medium text-neutral-700 dark:text-neutral-300 sm:text-sm">
-                  {item.name}
-                </h3>
-              </a>
-            ))}
+            <button
+              onClick={handleLoginWithGoogle}
+              className="nc-will-change-transform flex w-full rounded-lg bg-primary-50 dark:bg-neutral-800 px-4 py-3 transform transition-transform sm:px-6 hover:translate-y-[-2px]"
+            >
+              <img
+                className="flex-shrink-0"
+                src={googleSvg}
+                alt="Continue with Google"
+              />
+              <h3 className="flex-grow text-center text-sm font-medium text-neutral-700 dark:text-neutral-300 sm:text-sm">
+                Continue with Google
+              </h3>
+            </button>
           </div>
           {/* OR */}
           <div className="relative text-center">
@@ -66,7 +71,7 @@ const PageLogin: FC<PageLoginProps> = ({ className = "" }) => {
             <div className="absolute left-0 w-full top-1/2 transform -translate-y-1/2 border border-neutral-100 dark:border-neutral-800"></div>
           </div>
           {/* FORM */}
-          <form className="grid grid-cols-1 gap-6" action="#" method="post">
+          <form onSubmit={handleLogin} className="grid grid-cols-1 gap-6">
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
                 Email address
@@ -75,6 +80,9 @@ const PageLogin: FC<PageLoginProps> = ({ className = "" }) => {
                 type="email"
                 placeholder="example@example.com"
                 className="mt-1"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </label>
             <label className="block">
@@ -84,7 +92,13 @@ const PageLogin: FC<PageLoginProps> = ({ className = "" }) => {
                   Forgot password?
                 </Link>
               </span>
-              <Input type="password" className="mt-1" />
+              <Input
+                type="password"
+                className="mt-1"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </label>
             <ButtonPrimary type="submit">Continue</ButtonPrimary>
           </form>

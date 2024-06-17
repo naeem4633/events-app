@@ -1,9 +1,10 @@
 "use client";
 
-import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 import React, { useState, useRef, useEffect, FC } from "react";
 import ClearDataButton from "./ClearDataButton";
-import GooglePlacesAutocomplete from "../GooglePlacesAutocomplete";
+import GooglePlacesAutocomplete from "components/GooglePlacesAutocomplete";
+import { useSearchContext } from "context/search";
 
 export interface LocationInputProps {
   placeHolder?: string;
@@ -20,10 +21,10 @@ const LocationInput: FC<LocationInputProps> = ({
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
 }) => {
+  const { location, setLocation } = useSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [value, setValue] = useState("");
   const [showPopover, setShowPopover] = useState(autoFocus);
   const [suggestions, setSuggestions] = useState<{ description: string }[]>([]);
 
@@ -39,7 +40,6 @@ const LocationInput: FC<LocationInputProps> = ({
     return () => {
       document.removeEventListener("click", eventClickOutsideDiv);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPopover]);
 
   useEffect(() => {
@@ -50,16 +50,16 @@ const LocationInput: FC<LocationInputProps> = ({
 
   const eventClickOutsideDiv = (event: MouseEvent) => {
     if (!containerRef.current) return;
-    // CLICK IN_SIDE
     if (!showPopover || containerRef.current.contains(event.target as Node)) {
       return;
     }
-    // CLICK OUT_SIDE
     setShowPopover(false);
   };
 
-  const handleSelectLocation = (address: string, coordinates?: { lat: number; lng: number }) => {
-    setValue(address);
+  const handleSelectLocation = (address: string) => {
+    console.log("hanlde select called");
+    console.log("Selected Address:", address);
+    setLocation(address);
     setShowPopover(false);
   };
 
@@ -80,6 +80,9 @@ const LocationInput: FC<LocationInputProps> = ({
     ));
   };
 
+  console.log("Location:", location);
+  console.log("Suggestions:", suggestions);
+
   return (
     <div className={`relative flex ${className}`} ref={containerRef}>
       <div
@@ -95,20 +98,20 @@ const LocationInput: FC<LocationInputProps> = ({
           <input
             className={`block w-full bg-transparent border-none focus:ring-0 p-0 focus:outline-none focus:placeholder-neutral-300 xl:text-lg font-semibold placeholder-neutral-800 dark:placeholder-neutral-200 truncate`}
             placeholder={placeHolder}
-            value={value}
+            value={location}
             autoFocus={showPopover}
             onChange={(e) => {
-              setValue(e.currentTarget.value);
+              setLocation(e.currentTarget.value);
             }}
             ref={inputRef}
           />
           <span className="block mt-0.5 text-sm text-neutral-400 font-light ">
-            <span className="line-clamp-1">{!!value ? placeHolder : desc}</span>
+            <span className="line-clamp-1">{!!location ? placeHolder : desc}</span>
           </span>
-          {value && showPopover && (
+          {location && showPopover && (
             <ClearDataButton
               onClick={() => {
-                setValue("");
+                setLocation("");
               }}
             />
           )}
@@ -121,17 +124,17 @@ const LocationInput: FC<LocationInputProps> = ({
         setSuggestions={setSuggestions}
       />
 
-      {showPopover && value && (
+      {showPopover && location && (
         <div
           className={`h-8 absolute self-center top-1/2 -translate-y-1/2 z-0 bg-white dark:bg-neutral-800 ${divHideVerticalLineClass}`}
         ></div>
       )}
 
-      {showPopover && value && (
+      {/* {showPopover && (
         <div className="absolute left-0 z-40 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-3xl shadow-xl max-h-96 overflow-y-auto">
           {renderSuggestions()}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
+import usePlacesAutocomplete from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
+import { useSearchContext } from "context/search"; // Import your SearchContext hook
 
 interface GooglePlacesAutocompleteProps {
   inputRef: React.RefObject<HTMLInputElement>;
-  onSelect: (address: string, coordinates?: { lat: number; lng: number }) => void;
+  onSelect: (address: string) => void; // Update onSelect type to accept only address
   setSuggestions: (suggestions: { description: string }[]) => void;
 }
 
@@ -16,6 +14,8 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
   onSelect,
   setSuggestions,
 }) => {
+  const { setLocation } = useSearchContext(); // Get setLocation from your context
+
   const {
     ready,
     value,
@@ -23,9 +23,6 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
     setValue,
     clearSuggestions,
   } = usePlacesAutocomplete({
-    requestOptions: {
-      /* Define search scope here */
-    },
     debounce: 300,
   });
 
@@ -47,7 +44,7 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
 
   useEffect(() => {
     if (status === "OK") {
-      setSuggestions(data);
+      setSuggestions(data.map((suggestion) => ({ description: suggestion.description })));
     } else {
       setSuggestions([]);
     }
@@ -56,11 +53,10 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
   const handleSelect = ({ description }: { description: string }) => () => {
     setValue(description, false);
     clearSuggestions();
+    onSelect(description); // Update location text in context directly
 
-    getGeocode({ address: description }).then((results) => {
-      const { lat, lng } = getLatLng(results[0]);
-      onSelect(description, { lat, lng });
-    });
+    // Optionally, update location in context if needed
+    setLocation(description);
   };
 
   const renderSuggestions = () =>
@@ -71,9 +67,18 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
       } = suggestion;
 
       return (
-        <li key={place_id} onClick={handleSelect(suggestion)}>
-          <strong>{main_text}</strong> <small>{secondary_text}</small>
-        </li>
+        <span
+          onClick={handleSelect(suggestion)}
+          key={place_id}
+          className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+        >
+        <span className="block text-neutral-400">
+          {/* <ClockIcon className="h-4 w-4 sm:h-6 sm:w-6" /> */}
+        </span>
+        <span className="block font-medium text-neutral-700 dark:text-neutral-200">
+        {main_text} {secondary_text}
+        </span>
+      </span>
       );
     });
 
@@ -81,7 +86,15 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
     return null;
   }
 
-  return <div ref={ref}></div>;
+  return (
+    <div ref={ref}>
+    {data.length > 0 && (
+      <div className="absolute left-0 z-40 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-3xl shadow-xl max-h-96 overflow-y-auto">
+        <ul>{renderSuggestions()}</ul>
+      </div>
+    )}
+  </div>
+  );
 };
 
 export default GooglePlacesAutocomplete;

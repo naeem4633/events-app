@@ -198,6 +198,33 @@ const getPlacesByUserId = async (req, res) => {
   }
 };
 
+// Search for places based on number of guests, city, and date range
+const searchPlaces = async (req, res) => {
+  try {
+    const { city, guests, startDate, endDate } = req.body;
+
+    // Assuming 'bookings' is a subdocument array within 'Place' with fields 'startDate' and 'endDate'
+    const places = await Place.find({
+      address: new RegExp(city, 'i'),
+      seating_capacity: { $gte: guests },
+      $or: [
+        { bookings: { $elemMatch: { startDate: { $gte: endDate } } } },
+        { bookings: { $elemMatch: { endDate: { $lte: startDate } } } },
+        { bookings: { $size: 0 } } // No bookings at all
+      ]
+    });
+
+    if (places.length === 0) {
+      return res.status(404).json({ message: 'No places found matching the criteria' });
+    }
+
+    res.json(places);
+  } catch (error) {
+    console.error('Error searching for places:', error);
+    res.status(500).json({ error: 'Error searching for places' });
+  }
+};
+
 module.exports = {
   createPlace,
   getPlace,
@@ -208,5 +235,6 @@ module.exports = {
   createPlaceFromGoogleApi,
   createMultiplePlacesFromGoogleApi,
   getPlacesByUserId,
-  deleteMultipleById
+  deleteMultipleById,
+  searchPlaces
 };

@@ -6,53 +6,25 @@ import ClearDataButton from "../ClearDataButton";
 import DatePickerCustomHeaderTwoMonth from "components/DatePickerCustomHeaderTwoMonth";
 import DatePickerCustomDay from "components/DatePickerCustomDay";
 
-export interface StayDatesRangeInputProps {
+interface StayDatesRangeInputProps {
+  onDatesChange: (startDate: Date | null, endDate: Date | null) => void;
   className?: string;
   fieldClassName?: string;
 }
 
 const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
+  onDatesChange,
   className = "[ lg:nc-flex-2 ]",
   fieldClassName = "[ nc-hero-field-padding ]",
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/02/06")
-  );
+  const [startDate, setStartDate] = useState<Date | null>(new Date("2023/02/06"));
   const [endDate, setEndDate] = useState<Date | null>(new Date("2023/02/23"));
-  //
 
   const onChangeDate = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
-  };
-
-  const renderInput = () => {
-    return (
-      <>
-        <div className="text-neutral-300 dark:text-neutral-400">
-          <CalendarIcon className="w-5 h-5 lg:w-7 lg:h-7" />
-        </div>
-        <div className="flex-grow text-left">
-          <span className="block xl:text-lg font-semibold">
-            {startDate?.toLocaleDateString("en-US", {
-              month: "short",
-              day: "2-digit",
-            }) || "Add dates"}
-            {endDate
-              ? " - " +
-                endDate?.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "2-digit",
-                })
-              : ""}
-          </span>
-          <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
-            {"Event start - Event End"}
-          </span>
-        </div>
-      </>
-    );
+    onDatesChange(start, end);
   };
 
   return (
@@ -63,18 +35,30 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
             className={`flex-1 z-10 flex relative ${fieldClassName} items-center space-x-3 focus:outline-none ${
               open ? "nc-hero-field-focused" : ""
             }`}
-            onClickCapture={() => document.querySelector("html")?.click()}
           >
-            {renderInput()}
-            {startDate && open && (
-              <ClearDataButton onClick={() => onChangeDate([null, null])} />
-            )}
+            <div className="text-neutral-300 dark:text-neutral-400">
+              <CalendarIcon className="w-5 h-5 lg:w-7 lg:h-7" />
+            </div>
+            <div className="flex-grow text-left">
+              <span className="block xl:text-lg font-semibold">
+                {startDate?.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "2-digit",
+                }) || "Add dates"}
+                {endDate
+                  ? " - " +
+                    endDate?.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "2-digit",
+                    })
+                  : ""}
+              </span>
+              <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
+                {"Event start - Event End"}
+              </span>
+            </div>
+            {startDate && open && <ClearDataButton onClick={() => onChangeDate([null, null])} />}
           </Popover.Button>
-
-          {open && (
-            <div className="h-8 absolute self-center top-1/2 -translate-y-1/2 z-0 -inset-x-0.5 bg-white dark:bg-neutral-800"></div>
-          )}
-
           <Transition
             as={Fragment}
             enter="transition ease-out duration-200"
@@ -95,12 +79,8 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
                   monthsShown={2}
                   showPopperArrow={false}
                   inline
-                  renderCustomHeader={(p) => (
-                    <DatePickerCustomHeaderTwoMonth {...p} />
-                  )}
-                  renderDayContents={(day, date) => (
-                    <DatePickerCustomDay dayOfMonth={day} date={date} />
-                  )}
+                  renderCustomHeader={(p) => <DatePickerCustomHeaderTwoMonth {...p} />}
+                  renderDayContents={(day, date) => <DatePickerCustomDay dayOfMonth={day} date={date} />}
                 />
               </div>
             </Popover.Panel>

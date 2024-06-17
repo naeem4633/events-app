@@ -3,7 +3,8 @@ import { UserPlusIcon } from "@heroicons/react/24/outline";
 import ClearDataButton from "./ClearDataButton";
 import ButtonSubmit from "./ButtonSubmit";
 
-export interface GuestsInputProps {
+interface GuestsInputProps {
+  onGuestsChange: (guests: number) => void;
   fieldClassName?: string;
   className?: string;
   buttonSubmitHref?: string;
@@ -11,6 +12,7 @@ export interface GuestsInputProps {
 }
 
 const GuestsInput: React.FC<GuestsInputProps> = ({
+  onGuestsChange,
   fieldClassName = "nc-hero-field-padding",
   className = "nc-flex-1",
   buttonSubmitHref = "/listing-stay-map",
@@ -20,6 +22,7 @@ const GuestsInput: React.FC<GuestsInputProps> = ({
 
   const handleChangeData = (value: string) => {
     setGuestAdultsInputValue(value);
+    onGuestsChange(Number(value));
   };
 
   const handleBlur = () => {
@@ -32,9 +35,8 @@ const GuestsInput: React.FC<GuestsInputProps> = ({
       parsedValue = 1000;
     }
     setGuestAdultsInputValue(parsedValue.toString());
+    onGuestsChange(parsedValue);
   };
-
-  const totalGuests = Number(guestAdultsInputValue);
 
   return (
     <div className={`flex relative ${className}`}>
@@ -58,21 +60,12 @@ const GuestsInput: React.FC<GuestsInputProps> = ({
               {"Guests"}
             </span>
           </div>
-
-          {/* {!!totalGuests && (
-            <ClearDataButton
-              onClick={() => {
-                setGuestAdultsInputValue("50");
-              }}
-            />
-          )} */}
+          {hasButtonSubmit && (
+            <div className="pr-2 xl:pr-4">
+              <ButtonSubmit href={buttonSubmitHref} />
+            </div>
+          )}
         </div>
-
-        {hasButtonSubmit && (
-          <div className="pr-2 xl:pr-4">
-            <ButtonSubmit href={buttonSubmitHref} />
-          </div>
-        )}
       </div>
     </div>
   );

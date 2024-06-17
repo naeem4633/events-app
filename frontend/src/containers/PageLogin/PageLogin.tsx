@@ -1,16 +1,16 @@
-import React, { FC, useState } from "react";
-import googleSvg from "images/Google.svg";
-import { Helmet } from "react-helmet";
-import Input from "shared/Input/Input";
-import { Link, useNavigate } from "react-router-dom";
-import ButtonPrimary from "shared/Button/ButtonPrimary";
+import React, { FC, useState } from 'react';
+import googleSvg from 'images/Google.svg';
+import { Helmet } from 'react-helmet';
+import Input from 'shared/Input/Input';
+import { Link, useNavigate } from 'react-router-dom';
+import ButtonPrimary from 'shared/Button/ButtonPrimary';
 import { useFirebase } from '../../context/firebase';
 
 export interface PageLoginProps {
   className?: string;
 }
 
-const PageLogin: FC<PageLoginProps> = ({ className = "" }) => {
+const PageLogin: FC<PageLoginProps> = ({ className = '' }) => {
   const navigate = useNavigate();
   const firebase = useFirebase();
   const [email, setEmail] = useState<string>('');

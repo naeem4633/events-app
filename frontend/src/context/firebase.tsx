@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
   Auth,
   UserCredential,
 } from 'firebase/auth';
@@ -37,6 +38,7 @@ type FirebaseContextType = {
   ) => Promise<Auth | UserCredential>;
   signinWithGoogle: () => Promise<Auth | UserCredential>;
   signinUser: (email: string, password: string) => Promise<Auth | UserCredential>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
   getAuth: () => Auth;
   getCurrentUser: () => any;
 };
@@ -82,30 +84,41 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({ children }) 
       });
   };
 
-    const signinWithGoogle = (): Promise<UserCredential> => {
+  const signinWithGoogle = (): Promise<UserCredential> => {
     return signInWithPopup(firebaseAuth, firebaseGoogleAuthProvider)
-        .then((result) => {
-            console.log(result)
+      .then((result) => {
+        console.log(result);
         return result; // Return the full UserCredential object
-        })
-        .catch((error) => {
+      })
+      .catch((error) => {
         console.error('Error signing in with Google:', error);
         throw error;
-        });
-    };
-    
-    const signinUser = (email: string, password: string): Promise<UserCredential> => {
-        console.log("sign in fuction called")
-      return signInWithEmailAndPassword(firebaseAuth, email, password)
-        .then((userCredential) => {
-            console.log("sign in successfull")
-            return userCredential;
-        })
-        .catch((error) => {
+      });
+  };
+
+  const signinUser = (email: string, password: string): Promise<UserCredential> => {
+    console.log("sign in function called");
+    return signInWithEmailAndPassword(firebaseAuth, email, password)
+      .then((userCredential) => {
+        console.log("sign in successful");
+        return userCredential;
+      })
+      .catch((error) => {
         console.error('Error signing in with email and password:', error);
         throw error;
-        });
-    };
+      });
+  };
+
+  const handleSendPasswordResetEmail = (email: string): Promise<void> => {
+    return sendPasswordResetEmail(firebaseAuth, email)
+      .then(() => {
+        console.log('Password reset email sent');
+      })
+      .catch((error) => {
+        console.error('Error sending password reset email:', error);
+        throw error;
+      });
+  };
 
   const getAuthInstance = () => {
     return firebaseAuth;
@@ -119,6 +132,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({ children }) 
     signupUserWithEmailAndPassword,
     signinWithGoogle,
     signinUser,
+    sendPasswordResetEmail: handleSendPasswordResetEmail,
     getAuth: getAuthInstance,
     getCurrentUser,
   };

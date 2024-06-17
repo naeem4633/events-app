@@ -32,10 +32,10 @@ const HeroSearchForm2Mobile = () => {
         <MagnifyingGlassIcon className="flex-shrink-0 w-5 h-5" />
 
         <div className="ml-3 flex-1 text-left overflow-hidden">
-          <span className="block font-medium text-sm">Where to?</span>
+          <span className="block font-medium text-sm">Which Venue?</span>
           <div className="block mt-0.5 text-xs font-light text-neutral-500 dark:text-neutral-400 ">
             <span className="line-clamp-1">
-              Anywhere • Any week • Add guests
+              Anywhere • Any date • Add guests
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@ const HeroSearchForm2Mobile = () => {
                       </div>
 
                       <Tab.List className="pt-12 flex w-full justify-center font-semibold text-sm sm:text-base text-neutral-500 dark:text-neutral-400 space-x-6 sm:space-x-8">
-                        {["Stay", "Experiences", "Cars", "Flights"].map(
+                        {["Venues", "Caterers"].map(
                           (item, index) => (
                             <Tab key={index} as={Fragment}>
                               {({ selected }) => (

@@ -12,7 +12,6 @@ const connectDB = async () => {
     const databases = await adminDB.listDatabases();
     const existingDB = databases.databases.find(db => db.name === 'Events-Database');
 
-    // If TMUC database doesn't exist, create it
     if (!existingDB) {
       await mongoose.connection.db.createCollection('Events-Database');
       console.log('Events-Database created');

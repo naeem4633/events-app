@@ -5,6 +5,7 @@ import Input from "shared/Input/Input";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
 import { Link } from "react-router-dom";
 import { useFirebase } from '../../context/firebase';
+import { useNavigate } from "react-router-dom";
 
 export interface PageSignUpProps {
   className?: string;
@@ -12,6 +13,7 @@ export interface PageSignUpProps {
 
 const PageSignUp: FC<PageSignUpProps> = ({ className = "" }) => {
   const firebase = useFirebase();
+  const navigate = useNavigate();
   
   // State to manage form data
   const [formData, setFormData] = useState({
@@ -29,7 +31,7 @@ const PageSignUp: FC<PageSignUpProps> = ({ className = "" }) => {
       
       // If successful, you can redirect or perform any other action
       console.log('Signup successful');
-      // Redirect or navigate to another page
+      navigate('/')
     } catch (error: any) {
       console.error('Error signing up with email and password:', error.message);
     }

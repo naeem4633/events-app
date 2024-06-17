@@ -4,6 +4,7 @@ const hallSchema = new mongoose.Schema({
     name: { type: String, required: true },
     price_per_head: { type: Number, default: 0 },
     seating_capacity: { type: Number, default: 0 },
+    images: { type: [String], default: [] },
     place: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Place'

@@ -216,7 +216,7 @@ const SiteHeader = () => {
   return (
     <>
       <Helmet>
-        <title>Chisfis || Booking React Template</title>
+        <title>tayari || Event Booking</title>
       </Helmet>
       {renderControlSelections()}
       {renderHeader()}

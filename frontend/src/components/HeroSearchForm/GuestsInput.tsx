@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import ClearDataButton from "./ClearDataButton";
 import ButtonSubmit from "./ButtonSubmit";
+import { useSearchContext } from "context/search";
 
-interface GuestsInputProps {
-  onGuestsChange: (guests: number) => void;
+export interface GuestsInputProps {
   fieldClassName?: string;
   className?: string;
   buttonSubmitHref?: string;
@@ -12,17 +12,17 @@ interface GuestsInputProps {
 }
 
 const GuestsInput: React.FC<GuestsInputProps> = ({
-  onGuestsChange,
   fieldClassName = "nc-hero-field-padding",
   className = "nc-flex-1",
   buttonSubmitHref = "/listing-stay-map",
   hasButtonSubmit = true,
 }) => {
   const [guestAdultsInputValue, setGuestAdultsInputValue] = useState("50");
+  const { guests, setGuests } = useSearchContext();
 
   const handleChangeData = (value: string) => {
     setGuestAdultsInputValue(value);
-    onGuestsChange(Number(value));
+    setGuests(parseInt(value))
   };
 
   const handleBlur = () => {
@@ -35,8 +35,9 @@ const GuestsInput: React.FC<GuestsInputProps> = ({
       parsedValue = 1000;
     }
     setGuestAdultsInputValue(parsedValue.toString());
-    onGuestsChange(parsedValue);
   };
+
+  const totalGuests = Number(guestAdultsInputValue);
 
   return (
     <div className={`flex relative ${className}`}>
@@ -60,12 +61,21 @@ const GuestsInput: React.FC<GuestsInputProps> = ({
               {"Guests"}
             </span>
           </div>
-          {hasButtonSubmit && (
-            <div className="pr-2 xl:pr-4">
-              <ButtonSubmit href={buttonSubmitHref} />
-            </div>
-          )}
+
+          {/* {!!totalGuests && (
+            <ClearDataButton
+              onClick={() => {
+                setGuestAdultsInputValue("50");
+              }}
+            />
+          )} */}
         </div>
+
+        {hasButtonSubmit && (
+          <div className="pr-2 xl:pr-4">
+            <ButtonSubmit href={buttonSubmitHref} />
+          </div>
+        )}
       </div>
     </div>
   );

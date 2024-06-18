@@ -8,6 +8,8 @@ interface SearchContextType {
   setGuests: (guests: number) => void;
   dates: { startDate: Date | null; endDate: Date | null };
   setDates: (dates: { startDate: Date | null; endDate: Date | null }) => void;
+  searchResults: any[]; // Adjust the type according to your search result structure
+  setSearchResults: (results: any[]) => void; // Adjust the type according to your search result structure
 }
 
 // Create the context
@@ -21,6 +23,7 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     startDate: null,
     endDate: null
   });
+  const [searchResults, setSearchResults] = useState<any[]>([]); // Adjust the initial state and type as necessary
 
   return (
     <SearchContext.Provider
@@ -30,7 +33,9 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
         guests,
         setGuests,
         dates,
-        setDates
+        setDates,
+        searchResults,
+        setSearchResults
       }}
     >
       {children}

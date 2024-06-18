@@ -57,8 +57,6 @@ const LocationInput: FC<LocationInputProps> = ({
   };
 
   const handleSelectLocation = (address: string) => {
-    console.log("hanlde select called");
-    console.log("Selected Address:", address);
     setLocation(address);
     setShowPopover(false);
   };
@@ -79,9 +77,6 @@ const LocationInput: FC<LocationInputProps> = ({
       </span>
     ));
   };
-
-  console.log("Location:", location);
-  console.log("Suggestions:", suggestions);
 
   return (
     <div className={`relative flex ${className}`} ref={containerRef}>

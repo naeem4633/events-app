@@ -5,44 +5,63 @@ import GuestsInput from "../GuestsInput";
 import StayDatesRangeInput from "./StayDatesRangeInput";
 import { useSearchContext } from "context/search";
 import { BACKEND_URL } from "backendUrl"; 
+import { useNavigate } from "react-router-dom";
 
 const StaySearchForm: FC<{}> = () => {
-  const { location, guests, dates, setLocation, setGuests, setDates } = useSearchContext();
+  const navigate = useNavigate();
+  const { location, guests, dates, searchResults, setSearchResults } = useSearchContext();
 
   useEffect(() => {
     console.log("Location changed:", location);
   }, [location]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    console.log("date changed:", dates);
+  }, [dates]);
+
+  useEffect(() => {
+    console.log("number of guests changed:", guests);
+  }, [guests]);
+
+  useEffect(() => {
+    console.log("searchResults changed:", searchResults);
+  }, [searchResults]);
+
+  const handleSubmit = async () => {
     console.log("submit")
-    e.preventDefault();
     if (!location || !dates.startDate || !dates.endDate || !guests) {
       alert('Please fill all fields');
       return;
     }
 
     try {
-      const response = await axios.post(`${BACKEND_URL}places/search`, {
-        city: location,
+      const response = await axios.post(`${BACKEND_URL}search-places`, {
+        address: location,
         guests: guests,
         startDate: dates.startDate.toISOString(),
         endDate: dates.endDate.toISOString()
       });
       console.log('Response:', response.data);
+      setSearchResults(response.data);
+      navigate('listing-stay-map');
+      // Optionally navigate here after successful response
+      // router.push("/listing-stay-map");
     } catch (error) {
       console.error('Error searching for places:', error);
     }
   };
 
   return (
-    <form className="w-full relative mt-8 flex rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800">
+    <div className="w-full relative mt-8 flex rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800">
       <LocationInput className="flex-[1.5]" />
       <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
-      <StayDatesRangeInput className="flex-1" onDatesChange={(startDate, endDate) => setDates({ startDate, endDate })} />
+      <StayDatesRangeInput className="flex-1"/>
       <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
-      <GuestsInput className="flex-1" onGuestsChange={setGuests} />
-      <button onClick={handleSubmit} type="submit" className="hidden"></button>
-    </form>
+      <GuestsInput className="flex-1"/>
+      <button onClick={handleSubmit} className="px-4 py-2 bg-blue-500 text-white rounded-full">
+        Search
+      </button>
+    </div>
   );
 };
 

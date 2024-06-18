@@ -198,20 +198,17 @@ const getPlacesByUserId = async (req, res) => {
   }
 };
 
-// Search for places based on number of guests, city, and date range
 const searchPlaces = async (req, res) => {
   try {
-    const { city, guests, startDate, endDate } = req.body;
+    const { address } = req.body;
 
-    // Assuming 'bookings' is a subdocument array within 'Place' with fields 'startDate' and 'endDate'
+    // Extract the city from the address (second last part of the address)
+    const addressParts = address.split(',').map(part => part.trim());
+    const city = addressParts.length > 1 ? addressParts[addressParts.length - 2] : '';
+
+    // Query to find places with matching city in the address
     const places = await Place.find({
       address: new RegExp(city, 'i'),
-      seating_capacity: { $gte: guests },
-      $or: [
-        { bookings: { $elemMatch: { startDate: { $gte: endDate } } } },
-        { bookings: { $elemMatch: { endDate: { $lte: startDate } } } },
-        { bookings: { $size: 0 } } // No bookings at all
-      ]
     });
 
     if (places.length === 0) {

@@ -7,6 +7,7 @@ import "./styles/index.scss";
 import "./index.css";
 import "./fonts/line-awesome-1.3.0/css/line-awesome.css";
 import { FirebaseProvider } from './context/firebase';
+import { SearchProvider } from './context/search';
 
 //
 import App from "./App";
@@ -19,7 +20,9 @@ const root = ReactDOM.createRoot(
 root.render(
   // <React.StrictMode>
   <FirebaseProvider>
-    <App />
+    <SearchProvider>
+      <App />
+    </SearchProvider>
   </FirebaseProvider>
   // </React.StrictMode>
 );

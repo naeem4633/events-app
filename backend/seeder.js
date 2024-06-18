@@ -12,7 +12,6 @@ mongoose.connect('mongodb://localhost:27017/Events-database', {
 
 const generateSampleData = async () => {
   try {
-
     // Create 10 vendors
     const vendors = [];
     for (let i = 0; i < 10; i++) {
@@ -26,12 +25,18 @@ const generateSampleData = async () => {
       await vendor.save();
     }
 
+    // Possible cities
+    const cities = ['Islamabad', 'Lahore', 'Karachi'];
+
     // Create 10 places and 1-3 halls for each place
     for (let i = 0; i < 10; i++) {
+      // Randomly select a city
+      const city = cities[Math.floor(Math.random() * cities.length)];
+      
       const place = new Place({
         id: uuidv4(),
         name: `Place ${i + 1}`,
-        address: `123 Main St, City ${i + 1}`,
+        address: `123 Main St, ${city}`,
         website_uri: `http://place${i + 1}.com`,
         google_maps_uri: `http://maps.google.com/?q=Place+${i + 1}`,
         vendor: vendors[i]._id,

@@ -198,6 +198,30 @@ const getPlacesByUserId = async (req, res) => {
   }
 };
 
+const searchPlaces = async (req, res) => {
+  try {
+    const { address } = req.body;
+
+    // Extract the city from the address (second last part of the address)
+    const addressParts = address.split(',').map(part => part.trim());
+    const city = addressParts.length > 1 ? addressParts[addressParts.length - 2] : '';
+
+    // Query to find places with matching city in the address
+    const places = await Place.find({
+      address: new RegExp(city, 'i'),
+    });
+
+    if (places.length === 0) {
+      return res.status(404).json({ message: 'No places found matching the criteria' });
+    }
+
+    res.json(places);
+  } catch (error) {
+    console.error('Error searching for places:', error);
+    res.status(500).json({ error: 'Error searching for places' });
+  }
+};
+
 module.exports = {
   createPlace,
   getPlace,
@@ -208,5 +232,6 @@ module.exports = {
   createPlaceFromGoogleApi,
   createMultiplePlacesFromGoogleApi,
   getPlacesByUserId,
-  deleteMultipleById
+  deleteMultipleById,
+  searchPlaces
 };

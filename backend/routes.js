@@ -13,6 +13,7 @@ const {
   createMultiplePlacesFromGoogleApi,
   getPlacesByUserId,
   deleteMultipleById,
+  searchPlaces
 } = require('./controllers/placeController');
 const {
   createVendor,
@@ -43,6 +44,7 @@ router.delete('/places', deleteMultipleById);
 router.put('/places/:id', updatePlace);
 router.get('/places/by-user/:user_id', getPlacesByUserId);
 router.post('/fetch-places-from-google', fetchPlacesFromGoogle);
+router.post('/search-places', searchPlaces);
 
 // Vendor routes
 router.post('/vendor', createVendor);

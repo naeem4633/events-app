@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import ClearDataButton from "./ClearDataButton";
 import ButtonSubmit from "./ButtonSubmit";
+import { useSearchContext } from "context/search";
 
 export interface GuestsInputProps {
   fieldClassName?: string;
@@ -17,9 +18,11 @@ const GuestsInput: React.FC<GuestsInputProps> = ({
   hasButtonSubmit = true,
 }) => {
   const [guestAdultsInputValue, setGuestAdultsInputValue] = useState("50");
+  const { guests, setGuests } = useSearchContext();
 
   const handleChangeData = (value: string) => {
     setGuestAdultsInputValue(value);
+    setGuests(parseInt(value))
   };
 
   const handleBlur = () => {

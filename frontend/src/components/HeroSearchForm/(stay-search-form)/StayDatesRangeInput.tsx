@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import ClearDataButton from "../ClearDataButton";
 import DatePickerCustomHeaderTwoMonth from "components/DatePickerCustomHeaderTwoMonth";
 import DatePickerCustomDay from "components/DatePickerCustomDay";
+import { useSearchContext } from "context/search";
 
 export interface StayDatesRangeInputProps {
   className?: string;
@@ -15,16 +16,15 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
   className = "[ lg:nc-flex-2 ]",
   fieldClassName = "[ nc-hero-field-padding ]",
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/02/06")
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2023/02/23"));
-  //
+  const { dates, setDates } = useSearchContext();
+  const [startDate, setStartDate] = useState<Date | null>(dates.startDate);
+  const [endDate, setEndDate] = useState<Date | null>(dates.endDate);
 
   const onChangeDate = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+    setDates({ startDate: start, endDate: end }); // Update context
   };
 
   const renderInput = () => {

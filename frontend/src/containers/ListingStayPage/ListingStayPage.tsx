@@ -1,7 +1,7 @@
 import BackgroundSection from "components/BackgroundSection/BackgroundSection";
 import BgGlassmorphism from "components/BgGlassmorphism/BgGlassmorphism";
 import SectionGridAuthorBox from "components/SectionGridAuthorBox/SectionGridAuthorBox";
-import SectionHeroArchivePage from "components/SectionHeroArchivePage/SectionHeroArchivePage";
+import SectionHeroArchivePageHalls from "components/SectionHeroArchivePage/SectionHeroArchivePageHalls";
 import SectionSliderNewCategories from "components/SectionSliderNewCategories/SectionSliderNewCategories";
 import SectionSubscribe2 from "components/SectionSubscribe2/SectionSubscribe2";
 import React, { FC } from "react";
@@ -25,9 +25,7 @@ const ListingStayPage: FC<ListingStayPageProps> = ({ className = "" }) => {
 
       <div className="container relative overflow-hidden">
         {/* SECTION HERO */}
-        <SectionHeroArchivePage
-          currentPage="Venues"
-          currentTab="Venues"
+        <SectionHeroArchivePageHalls
           className="pt-10 pb-24 lg:pb-28 lg:pt-16 "
         />
 

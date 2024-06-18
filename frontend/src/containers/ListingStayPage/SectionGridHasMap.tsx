@@ -78,7 +78,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
             <GoogleMapReact
               defaultZoom={12}
-              // defaultCenter={results[0].map}
+              defaultCenter={{ "lat": 55.2094559, "lng": 61.5594641 }}
               bootstrapURLKeys={{
                 key: "AIzaSyCub7X0l9J4rMg3QkTWRhvKjv5-hh2SfQQ",
               }}

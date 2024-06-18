@@ -3,6 +3,7 @@ import axios from "axios";
 import { BACKEND_URL } from "backendUrl";
 
 interface Hall {
+  _id: string;
   name: string;
   price_per_head: number;
   seating_capacity: number;
@@ -26,7 +27,6 @@ interface Place {
   images: string[];
 }
 
-// Define the shape of your context data
 interface SearchContextType {
   location: string;
   setLocation: (location: string) => void;
@@ -41,12 +41,14 @@ interface SearchContextType {
   country: string;
   filterResultsByPrice: (minPrice: number, maxPrice: number) => void;
   filteredResults: Place[];
+  selectedVenue: Place | null;
+  setSelectedVenue: (venue: Place | null) => void;
+  selectedHall: Hall | null;
+  setSelectedHall: (hall: Hall | null) => void;
 }
 
-// Create the context
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
-// Function to extract city and country from location
 const getLocationParts = (location: string) => {
   const parts = location.split(',').map(part => part.trim());
   return {
@@ -55,7 +57,6 @@ const getLocationParts = (location: string) => {
   };
 };
 
-// Create a provider component
 export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [location, setLocation] = useState<string>(() => {
     return localStorage.getItem("location") || "";
@@ -80,6 +81,15 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
   });
 
   const [filteredResults, setFilteredResults] = useState<Place[]>([]);
+  const [selectedVenue, setSelectedVenue] = useState<Place | null>(() => {
+    const storedVenue = localStorage.getItem("selectedVenue");
+    return storedVenue ? JSON.parse(storedVenue) : null;
+  });
+  
+  const [selectedHall, setSelectedHall] = useState<Hall | null>(() => {
+    const storedHall = localStorage.getItem("selectedHall");
+    return storedHall ? JSON.parse(storedHall) : null;
+  });
 
   const { city, country } = getLocationParts(location);
 
@@ -107,6 +117,14 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("searchResults", JSON.stringify(searchResults));
   }, [searchResults]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedVenue", JSON.stringify(selectedVenue));
+  }, [selectedVenue]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedHall", JSON.stringify(selectedHall));
+  }, [selectedHall]);
 
   const searchPlaces = async () => {
     if (!location || !dates.startDate || !dates.endDate || !guests) {
@@ -152,6 +170,10 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
         country,
         filterResultsByPrice,
         filteredResults,
+        selectedVenue,
+        setSelectedVenue,
+        selectedHall,
+        setSelectedHall,
       }}
     >
       {children}

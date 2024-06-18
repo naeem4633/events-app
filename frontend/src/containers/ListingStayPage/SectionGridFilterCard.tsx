@@ -1,40 +1,41 @@
 import React, { FC } from "react";
 import StayCard from "components/StayCard/StayCard";
-import { DEMO_STAY_LISTINGS } from "data/listings";
-import { StayDataType } from "data/types";
 import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
-import Heading2 from "components/Heading/Heading2";
+import Heading3 from "components/Heading/Heading3";
+import { useSearchContext } from "context/search"; // Import the context
 
 export interface SectionGridFilterCardProps {
   className?: string;
-  data?: StayDataType[];
 }
-
-const DEMO_DATA: StayDataType[] = DEMO_STAY_LISTINGS.filter((_, i) => i < 8);
 
 const SectionGridFilterCard: FC<SectionGridFilterCardProps> = ({
   className = "",
-  data = DEMO_DATA,
 }) => {
+  const { selectedVenue } = useSearchContext();
+
+  if (!selectedVenue) {
+    return <div>No venue selected</div>;
+  }
+
   return (
     <div
       className={`nc-SectionGridFilterCard ${className}`}
       data-nc-id="SectionGridFilterCard"
     >
-      <Heading2 />
+      <Heading3 />
 
-      <div className="mb-8 lg:mb-11">
+      {/* <div className="mb-8 lg:mb-11">
         <TabFilters />
-      </div>
+      </div> */}
       <div className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {data.map((stay) => (
-          <StayCard key={stay.id} data={stay} />
+        {selectedVenue.halls.map((hall) => (
+          <StayCard key={hall._id} data={hall} />
         ))}
       </div>
-      <div className="flex mt-16 justify-center items-center">
+      {/* <div className="flex mt-16 justify-center items-center">
         <Pagination />
-      </div>
+      </div> */}
     </div>
   );
 };

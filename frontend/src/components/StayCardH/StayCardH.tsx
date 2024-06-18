@@ -1,25 +1,46 @@
-import React, { FC } from "react";
+import React, { useEffect, FC } from "react";
 import GallerySlider from "components/GallerySlider/GallerySlider";
 import StartRating from "components/StartRating/StartRating";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSearchContext } from "context/search";
+
+interface Hall {
+  _id: string,
+  name: string;
+  price_per_head: number;
+  seating_capacity: number;
+  images: string[];
+  place: string;
+}
+
+interface Place {
+  id: string;
+  name: string;
+  address: string;
+  images: string[];
+  rating: number;
+  userRatingCount: number;
+  halls: Hall[];
+}
 
 export interface StayCardHProps {
   className?: string;
-  data: {
-    id: string;
-    name: string;
-    address: string;
-    images: string[];
-    rating: number;
-    userRatingCount: number;
-    halls: {
-      seating_capacity: number;
-    }[];
-  };
+  data: Place;
 }
 
 const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
   const { images, address, name, id, rating, userRatingCount, halls } = data;
+  const { selectedVenue, setSelectedVenue } = useSearchContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("selected venue changed:", selectedVenue);
+  }, [selectedVenue]);
+
+  const handleCardClick = () => {
+    setSelectedVenue(data);
+    navigate('/listing-stay');
+  };
 
   const renderSliderGallery = () => {
     return (
@@ -28,7 +49,6 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
           ratioClass="aspect-w-6 aspect-h-5"
           galleryImgs={images}
           uniqueID={`StayCardH_${id}`}
-          href={`/place/${id}`}
         />
       </div>
     );
@@ -76,8 +96,9 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
     <div
       className={`nc-StayCardH group relative bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow will-change-transform ${className}`}
       data-nc-id="StayCardH"
+      onClick={handleCardClick}
     >
-      <Link to={`/place/${id}`} className="absolute inset-0"></Link>
+      <div className="absolute inset-0"></div>
       <div className="grid grid-cols-1 md:flex md:flex-row">
         {renderSliderGallery()}
         {renderContent()}

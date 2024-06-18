@@ -45,7 +45,7 @@ const StayDetailPageContainer: FC<{}> = () => {
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name="Wooden house" />
-          <LikeSaveBtns />
+          {/* <LikeSaveBtns /> */}
         </div>
 
         {/* 2 */}
@@ -85,7 +85,7 @@ const StayDetailPageContainer: FC<{}> = () => {
               6 <span className="hidden sm:inline-block">guests</span>
             </span>
           </div>
-          <div className="flex items-center space-x-3">
+          {/* <div className="flex items-center space-x-3">
             <i className=" las la-bed text-2xl"></i>
             <span className=" ">
               6 <span className="hidden sm:inline-block">beds</span>
@@ -102,7 +102,7 @@ const StayDetailPageContainer: FC<{}> = () => {
             <span className=" ">
               2 <span className="hidden sm:inline-block">bedrooms</span>
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     );
@@ -375,10 +375,10 @@ const StayDetailPageContainer: FC<{}> = () => {
         </div>
 
         {/* == */}
-        <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
-        <div>
+        {/* <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div> */}
+        {/* <div>
           <ButtonSecondary href="/author">See host profile</ButtonSecondary>
-        </div>
+        </div> */}
       </div>
     );
   };
@@ -610,13 +610,12 @@ const StayDetailPageContainer: FC<{}> = () => {
         <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
           {renderSection1()}
           {renderSection2()}
-          {renderSection3()}
-          {renderSection4()}
+          {/* {renderSection3()} */}
+          {/* {renderSection4()} */}
           <SectionDateRange />
           {renderSection5()}
-          {renderSection6()}
+          {/* {renderSection6()} */}
           {renderSection7()}
-          {renderSection8()}
         </div>
 
         {/* SIDEBAR */}

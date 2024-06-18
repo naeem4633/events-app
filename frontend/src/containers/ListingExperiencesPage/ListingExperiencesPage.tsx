@@ -74,7 +74,7 @@ const ListingCaterersPage: FC<ListingCaterersPageProps> = ({
       data-nc-id="ListingCaterersPage"
     >
       <Helmet>
-        <title>Chisfis || Booking React Template</title>
+        <title>tayari || Event Booking </title>
       </Helmet>
       <BgGlassmorphism />
 

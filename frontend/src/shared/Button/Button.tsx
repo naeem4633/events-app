@@ -33,7 +33,7 @@ const Button: FC<ButtonProps> = ({
 }) => {
   const CLASSES =
     `nc-Button relative h-auto inline-flex items-center justify-center rounded-full transition-colors ${fontSize} ${sizeClass} ${translate} ${className} ` +
-    twFocusClass(true);
+    twFocusClass(false);
 
   const _renderLoading = () => {
     return (

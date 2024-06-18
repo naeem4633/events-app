@@ -20,17 +20,7 @@ const SectionHeroArchivePage: FC<SectionHeroArchivePageProps> = ({
   currentTab,
   rightImage = imagePng,
 }) => {
-  const { location, searchResults } = useSearchContext();
-
-  const getLocationParts = (location: string) => {
-    const parts = location.split(',').map(part => part.trim());
-    return {
-      city: parts.length > 1 ? parts[parts.length - 2] : '',
-      country: parts.length > 0 ? parts[parts.length - 1] : ''
-    };
-  };
-
-  const { city, country } = getLocationParts(location);
+  const { location, searchResults, city, country } = useSearchContext();
 
   return (
     <div

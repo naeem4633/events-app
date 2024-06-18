@@ -2,20 +2,21 @@ import React, { FC, useState } from "react";
 import AnyReactComponent from "components/AnyReactComponent/AnyReactComponent";
 import StayCardH from "components/StayCardH/StayCardH";
 import GoogleMapReact from "google-map-react";
-import { DEMO_STAY_LISTINGS } from "data/listings";
 import ButtonClose from "shared/ButtonClose/ButtonClose";
 import Checkbox from "shared/Checkbox/Checkbox";
 import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
-
-const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12);
+import { useSearchContext } from "context/search";
 
 export interface SectionGridHasMapProps {}
 
 const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
   const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
   const [showFullMapFixed, setShowFullMapFixed] = useState(false);
+  const { searchResults, filteredResults } = useSearchContext();
+
+  const results = filteredResults.length > 0 ? filteredResults : searchResults;
 
   return (
     <div>
@@ -27,7 +28,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             <TabFilters />
           </div>
           <div className="grid grid-cols-1 gap-8">
-            {DEMO_STAYS.map((item) => (
+            {results.map((item) => (
               <div
                 key={item.id}
                 onMouseEnter={() => setCurrentHoverID((_) => item.id)}
@@ -77,13 +78,13 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
             <GoogleMapReact
               defaultZoom={12}
-              defaultCenter={DEMO_STAYS[0].map}
+              // defaultCenter={results[0].map}
               bootstrapURLKeys={{
-                key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
+                key: "AIzaSyCub7X0l9J4rMg3QkTWRhvKjv5-hh2SfQQ",
               }}
               yesIWantToUseGoogleMapApiInternals
             >
-              {DEMO_STAYS.map((item) => (
+              {/* {results.map((item) => (
                 <AnyReactComponent
                   isSelected={currentHoverID === item.id}
                   key={item.id}
@@ -91,7 +92,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
                   lng={item.map.lng}
                   listing={item}
                 />
-              ))}
+              ))} */}
             </GoogleMapReact>
           </div>
         </div>

@@ -8,9 +8,12 @@ import StaySearchForm from "./(stay-search-form)/StaySearchForm";
 import CarsSearchForm from "./(car-search-form)/CarsSearchForm";
 import FlightSearchForm from "./(flight-search-form)/FlightSearchForm";
 import logoImg from "images/logo.png";
-
+import { useNavigate } from "react-router-dom";
+import { useSearchContext } from "context/search";
 
 const HeroSearchForm2Mobile = () => {
+  const navigate = useNavigate();
+  const { searchPlaces } = useSearchContext();
   const [showModal, setShowModal] = useState(false);
 
   // FOR RESET ALL DATA WHEN CLICK CLEAR BUTTON
@@ -24,6 +27,12 @@ const HeroSearchForm2Mobile = () => {
   function openModal() {
     setShowModal(true);
   }
+
+  const handleSearch = async () => {
+    await searchPlaces();
+    closeModal();
+    navigate('listing-stay-map');
+  };
 
   const renderButtonOpenModal = () => {
     return (
@@ -150,9 +159,7 @@ const HeroSearchForm2Mobile = () => {
                           Clear all
                         </button>
                         <ButtonSubmit
-                          onClick={() => {
-                            closeModal();
-                          }}
+                          onClick={handleSearch}
                         />
                       </div>
                     </Tab.Group>

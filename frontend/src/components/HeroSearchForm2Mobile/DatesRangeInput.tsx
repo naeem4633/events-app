@@ -1,7 +1,8 @@
 import DatePicker from "react-datepicker";
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import DatePickerCustomHeaderTwoMonth from "components/DatePickerCustomHeaderTwoMonth";
 import DatePickerCustomDay from "components/DatePickerCustomDay";
+import { useSearchContext } from "context/search";
 
 export interface StayDatesRangeInputProps {
   className?: string;
@@ -10,15 +11,20 @@ export interface StayDatesRangeInputProps {
 const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
   className = "",
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/02/06")
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2023/02/23"));
+  const { dates, setDates } = useSearchContext();
+  const [startDate, setStartDate] = useState<Date | null>(dates.startDate);
+  const [endDate, setEndDate] = useState<Date | null>(dates.endDate);
+
+  useEffect(() => {
+    setStartDate(dates.startDate);
+    setEndDate(dates.endDate);
+  }, [dates]);
 
   const onChangeDate = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+    setDates({ startDate: start, endDate: end }); // Update context
   };
 
   return (

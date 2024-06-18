@@ -10,6 +10,8 @@ const placeSchema = new mongoose.Schema({
     seating_capacity: { type: Number, default: 0 },
     price_per_head: { type: Number, default: 0 },
     type: { type: String, default: '' },
+    rating: { type: Number, default: 0 },
+    userRatingCount: { type: Number, default: 0 },
     halls: [
         {
             type: mongoose.Schema.Types.ObjectId,

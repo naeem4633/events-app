@@ -1,3 +1,4 @@
+import { useSearchContext } from "context/search";
 import React from "react";
 import { ReactNode } from "react";
 
@@ -12,17 +13,35 @@ const Heading2: React.FC<Heading2Props> = ({
   heading = "Stays in Tokyo",
   subHeading,
 }) => {
+  const { city, searchResults, guests, dates } = useSearchContext();
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return "";
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+    });
+  };
+
+  const startDate = formatDate(dates.startDate);
+  const endDate = formatDate(dates.endDate);
+
   return (
     <div className={`mb-12 lg:mb-16 ${className}`}>
-      <h2 className="text-4xl font-semibold">{heading}</h2>
+      <h2 className="text-4xl font-semibold">Venues in {city}</h2>
       {subHeading ? (
         subHeading
       ) : (
         <span className="block text-neutral-500 dark:text-neutral-400 mt-3">
-          233 stays
+          {searchResults.length} Venues
+          {startDate && endDate && (
+            <>
+              <span className="mx-2">·</span>
+              {startDate} - {endDate}
+            </>
+          )}
           <span className="mx-2">·</span>
-          Aug 12 - 18
-          <span className="mx-2">·</span>2 Guests
+          {guests} Guests
         </span>
       )}
     </div>

@@ -206,10 +206,10 @@ const searchPlaces = async (req, res) => {
     const addressParts = address.split(',').map(part => part.trim());
     const city = addressParts.length > 1 ? addressParts[addressParts.length - 2] : '';
 
-    // Query to find places with matching city in the address
+    // Query to find places with matching city in the address and populate the halls field
     const places = await Place.find({
       address: new RegExp(city, 'i'),
-    });
+    }).populate('halls'); // Assuming halls is the field that references the Hall collection
 
     if (places.length === 0) {
       return res.status(404).json({ message: 'No places found matching the criteria' });
@@ -221,6 +221,9 @@ const searchPlaces = async (req, res) => {
     res.status(500).json({ error: 'Error searching for places' });
   }
 };
+
+module.exports = { searchPlaces };
+
 
 module.exports = {
   createPlace,

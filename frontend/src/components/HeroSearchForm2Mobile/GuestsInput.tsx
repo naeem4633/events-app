@@ -1,57 +1,38 @@
-import { GuestsObject } from "components/HeroSearchForm/type";
-import NcInputNumber from "components/NcInputNumber/NcInputNumber";
 import React, { useEffect, useState } from "react";
 import { FC } from "react";
+import { useSearchContext } from "context/search";
+import { UserPlusIcon } from "@heroicons/react/24/outline";
+
 export interface GuestsInputProps {
-  defaultValue?: GuestsObject;
-  onChange?: (data: GuestsObject) => void;
   className?: string;
 }
 
 const GuestsInput: FC<GuestsInputProps> = ({
-  defaultValue,
-  onChange,
   className = "",
 }) => {
-  const [guestAdultsInputValue, setGuestAdultsInputValue] = useState(
-    defaultValue?.guestAdults || 0
-  );
-  // const [guestChildrenInputValue, setGuestChildrenInputValue] = useState(
-  //   defaultValue?.guestChildren || 0
-  // );
-  // const [guestInfantsInputValue, setGuestInfantsInputValue] = useState(
-  //   defaultValue?.guestInfants || 0
-  // );
+  const { guests, setGuests } = useSearchContext();
+  const [guestAdultsInputValue, setGuestAdultsInputValue] = useState<string>(guests.toString());
 
   useEffect(() => {
-    setGuestAdultsInputValue(defaultValue?.guestAdults || 50);
-  }, [defaultValue?.guestAdults]);
-  // useEffect(() => {
-  //   setGuestChildrenInputValue(defaultValue?.guestChildren || 0);
-  // }, [defaultValue?.guestChildren]);
-  // useEffect(() => {
-  //   setGuestInfantsInputValue(defaultValue?.guestInfants || 0);
-  // }, [defaultValue?.guestInfants]);
+    setGuestAdultsInputValue(guests.toString());
+  }, [guests]);
 
-  const handleChangeData = (value: number, type: keyof GuestsObject) => {
-    let newValue = {
-      guestAdults: guestAdultsInputValue,
-      // guestChildren: guestChildrenInputValue,
-      // guestInfants: guestInfantsInputValue,
-    };
-    if (type === "guestAdults") {
-      setGuestAdultsInputValue(value);
-      newValue.guestAdults = value;
+  const handleChangeData = (value: string) => {
+    setGuestAdultsInputValue(value);
+    setGuests(parseInt(value));
+  };
+
+  const handleBlur = () => {
+    let parsedValue = parseInt(guestAdultsInputValue);
+    if (isNaN(parsedValue)) {
+      parsedValue = 50;
+    } else if (parsedValue < 50) {
+      parsedValue = 50;
+    } else if (parsedValue > 1000) {
+      parsedValue = 1000;
     }
-    // if (type === "guestChildren") {
-    //   setGuestChildrenInputValue(value);
-    //   newValue.guestChildren = value;
-    // }
-    // if (type === "guestInfants") {
-    //   setGuestInfantsInputValue(value);
-    //   newValue.guestInfants = value;
-    // }
-    // onChange && onChange(newValue);
+    setGuestAdultsInputValue(parsedValue.toString());
+    setGuests(parsedValue);
   };
 
   return (
@@ -59,32 +40,23 @@ const GuestsInput: FC<GuestsInputProps> = ({
       <span className="mb-5 block font-semibold text-xl sm:text-2xl">
         {`Who's coming?`}
       </span>
-      <NcInputNumber
-        className="w-full"
-        defaultValue={guestAdultsInputValue}
-        onChange={(value) => handleChangeData(value, "guestAdults")}
-        max={1000}
-        min={50}
-        label="Adults"
-        desc="Ages 13 or above"
-      />
-      {/* <NcInputNumber
-        className="w-full mt-6"
-        defaultValue={guestChildrenInputValue}
-        onChange={(value) => handleChangeData(value, "guestChildren")}
-        max={20}
-        label="Children"
-        desc="Ages 2–12"
-      /> */}
-
-      {/* <NcInputNumber
-        className="w-full mt-6"
-        defaultValue={guestInfantsInputValue}
-        onChange={(value) => handleChangeData(value, "guestInfants")}
-        max={20}
-        label="Infants"
-        desc="Ages 0–2"
-      /> */}
+      <div className="relative flex items-center">
+        <div className="text-neutral-300 dark:text-neutral-400">
+          <UserPlusIcon className="w-5 h-5 lg:w-7 lg:h-7" />
+        </div>
+        <div className="flex-grow flex items-center justify-between">
+          <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
+            {"Guests"}
+          </span>
+          <input
+            className="w-fit block xl:text-lg font-semibold w-full text-center border px-4 py-3 rounded-xl"
+            type="text"
+            value={guestAdultsInputValue}
+            onChange={(e) => handleChangeData(e.target.value)}
+            onBlur={handleBlur}
+          />
+        </div>
+      </div>
     </div>
   );
 };

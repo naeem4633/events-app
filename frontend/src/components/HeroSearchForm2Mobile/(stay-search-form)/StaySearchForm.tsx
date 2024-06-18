@@ -112,7 +112,7 @@ const StaySearchForm = () => {
             <span>{guestSelected || `Add guests`}</span>
           </button>
         ) : (
-          <GuestsInput defaultValue={guestInput} onChange={setGuestInput} />
+          <GuestsInput />
         )}
       </div>
     );

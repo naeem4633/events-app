@@ -6,7 +6,7 @@ const placeSchema = new mongoose.Schema({
     address: { type: String, required: true },
     website_uri: { type: String, default: '' },
     google_maps_uri: { type: String, default: '' },
-    vendor: { type: mongoose.Schema.Types.ObjectId, ref: 'Vendor' },
+    vendor_email: { type: String, default: '' },
     seating_capacity: { type: Number, default: 0 },
     price_per_head: { type: Number, default: 0 },
     type: { type: String, default: '' },
@@ -18,6 +18,7 @@ const placeSchema = new mongoose.Schema({
             ref: 'Hall'
         }
     ],
+    google_images: { type: [String], default: [] },
     images: { type: [String], default: [] } 
 });
 

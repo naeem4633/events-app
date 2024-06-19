@@ -1,6 +1,8 @@
 const express = require('express');
+const multer = require('multer');
+
 const {
-  fetchPlacesFromGoogle,
+  fetchPlacesFromGoogle, fetchPlaceDetailsFromGoogle
 } = require('./controllers/PlacesApiController');
 const {
   createPlace,
@@ -11,7 +13,7 @@ const {
   createMultiplePlaces,
   createPlaceFromGoogleApi,
   createMultiplePlacesFromGoogleApi,
-  getPlacesByUserId,
+  getPlacesByUserEmail,
   deleteMultipleById,
   searchPlaces
 } = require('./controllers/placeController');
@@ -29,8 +31,12 @@ const {
   deleteHall,
   getAllHalls,
 } = require('./controllers/hallController');
+const { savePlace, getSavedPlaces, removeSavedPlace } = require('./controllers/savedplaceController');
+const { uploadImageController } = require('./controllers/uploadController');
+
 
 const router = express.Router();
+const upload = multer();
 
 // Place routes
 router.post('/place', createPlaceFromGoogleApi);
@@ -42,8 +48,10 @@ router.get('/places', getAllPlaces);
 router.delete('/places/:id', deletePlace);
 router.delete('/places', deleteMultipleById);
 router.put('/places/:id', updatePlace);
-router.get('/places/by-user/:user_id', getPlacesByUserId);
+router.get('/places/by-user/:user_email', getPlacesByUserEmail);
 router.post('/fetch-places-from-google', fetchPlacesFromGoogle);
+router.get('/place-details-from-google', fetchPlaceDetailsFromGoogle);
+//search places against search terms in loacl database
 router.post('/search-places', searchPlaces);
 
 // Vendor routes
@@ -59,5 +67,13 @@ router.get('/halls/:id', getHall);
 router.get('/halls', getAllHalls);
 router.put('/halls/:id', updateHall);
 router.delete('/halls/:id', deleteHall);
+
+// Saved Place routes
+router.post('/saved-places', savePlace);
+router.get('/saved-places/:user_firebase_id', getSavedPlaces);
+router.delete('/saved-places', removeSavedPlace);
+
+//Upload image routes
+router.post('/upload-image', upload.single('file'), uploadImageController);
 
 module.exports = router;

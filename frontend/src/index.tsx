@@ -8,6 +8,7 @@ import "./index.css";
 import "./fonts/line-awesome-1.3.0/css/line-awesome.css";
 import { FirebaseProvider } from './context/firebase';
 import { SearchProvider } from './context/search';
+import { AddingPlaceProvider } from './context/addingPlace';
 
 //
 import App from "./App";
@@ -21,7 +22,9 @@ root.render(
   // <React.StrictMode>
   <FirebaseProvider>
     <SearchProvider>
+    <AddingPlaceProvider>
       <App />
+    </AddingPlaceProvider>
     </SearchProvider>
   </FirebaseProvider>
   // </React.StrictMode>

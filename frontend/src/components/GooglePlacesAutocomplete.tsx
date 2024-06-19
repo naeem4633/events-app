@@ -5,8 +5,8 @@ import { useSearchContext } from "context/search"; // Import your SearchContext 
 
 interface GooglePlacesAutocompleteProps {
   inputRef: React.RefObject<HTMLInputElement>;
-  onSelect: (address: string) => void; // Update onSelect type to accept only address
-  setSuggestions: (suggestions: { description: string }[]) => void;
+  onSelect: (address: string, id: string) => void; // Update onSelect type to accept address and id
+  setSuggestions: (suggestions: { description: string, place_id: string }[]) => void;
 }
 
 const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
@@ -44,19 +44,22 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
 
   useEffect(() => {
     if (status === "OK") {
-      setSuggestions(data.map((suggestion) => ({ description: suggestion.description })));
+      setSuggestions(data.map((suggestion) => ({ 
+        description: suggestion.description,
+        place_id: suggestion.place_id 
+      })));
     } else {
       setSuggestions([]);
     }
   }, [status, data, setSuggestions]);
 
-  const handleSelect = ({ description }: { description: string }) => () => {
-    setValue(description, false);
+  const handleSelect = (suggestion: { description: string, place_id: string }) => () => {
+    setValue(suggestion.description, false);
     clearSuggestions();
-    onSelect(description); // Update location text in context directly
+    onSelect(suggestion.description, suggestion.place_id); 
 
     // Optionally, update location in context if needed
-    setLocation(description);
+    setLocation(suggestion.description);
   };
 
   const renderSuggestions = () =>
@@ -73,7 +76,6 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
           className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
         >
         <span className="block text-neutral-400">
-          {/* <ClockIcon className="h-4 w-4 sm:h-6 sm:w-6" /> */}
         </span>
         <span className="block font-medium text-neutral-700 dark:text-neutral-200">
         {main_text} {secondary_text}

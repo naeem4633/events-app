@@ -3,10 +3,10 @@ const Place = require('../models/placeModel');
 // Create a new place from Google API
 const createPlaceFromGoogleApi = async (req, res) => {
   try {
-      const { id, vendor_id } = req.body;
+      const { id, vendor_email } = req.body;
       
-      // Check if a place with the same ID and firebase ID already exists
-      const existingPlace = await Place.findOne({ id, vendor_id });
+      // Check if a place with the same ID and vendor email already exists
+      const existingPlace = await Place.findOne({ id, vendor_email });
       if (existingPlace) {
           return res.status(400).json({ error: 'Place already exists' });
       }
@@ -27,10 +27,10 @@ const createMultiplePlacesFromGoogleApi = async (req, res) => {
       const createdPlaces = [];
 
       for (const placeData of places) {
-          const { id, vendor_id } = placeData;
+          const { id, vendor_email } = placeData;
           
-          // Check if a place with the same ID and firebase ID already exists
-          const existingPlace = await Place.findOne({ id, vendor_id });
+          // Check if a place with the same ID and vendor email already exists
+          const existingPlace = await Place.findOne({ id, vendor_email });
           if (existingPlace) {
               return res.status(400).json({ error: 'Place already exists' });
           }
@@ -50,10 +50,10 @@ const createMultiplePlacesFromGoogleApi = async (req, res) => {
 // Create a new place
 const createPlace = async (req, res) => {
   try {
-      const { id, vendor_id } = req.body;
+      const { id, vendor_email } = req.body;
       
-      // Check if a place with the same ID and firebase ID already exists
-      const existingPlace = await Place.findOne({ id, vendor_id });
+      // Check if a place with the same ID and vendor email already exists
+      const existingPlace = await Place.findOne({ id, vendor_email });
       if (existingPlace) {
           return res.status(400).json({ error: 'Place already exists' });
       }
@@ -74,11 +74,11 @@ const createMultiplePlaces = async (req, res) => {
     const createdPlaces = [];
 
     for (const placeData of places) {
-      const { id, vendor_id } = placeData;
+      const { id, vendor_email } = placeData;
 
       try {
-        // Check if a place with the same ID and firebase ID already exists
-        const existingPlace = await Place.findOne({ id, vendor_id });
+        // Check if a place with the same ID and vendor email already exists
+        const existingPlace = await Place.findOne({ id, vendor_email });
         if (existingPlace) {
           // Skip this place and continue to the next iteration
           console.log(`Place with ID ${id} already exists. Skipping.`);
@@ -140,23 +140,20 @@ const deleteMultipleById = async (req, res) => {
 
 // Update a place by its ID
 const updatePlace = async (req, res) => {
+  const { id } = req.params; // Corrected to use 'id'
+  const updateData = req.body;
+
   try {
-      const { isLead } = req.body;
-      
-      const updatedPlace = await Place.findOneAndUpdate(
-        { id: req.params.id }, { isLead }, { new: true }
-      );
-      
-      if (!updatedPlace) {
-          return res.status(404).json({ error: 'Place not found' });
-      }
-      
-      res.json(updatedPlace);
+    const place = await Place.findByIdAndUpdate(id, updateData, { new: true });
+    if (!place) {
+      return res.status(404).send({ message: 'Place not found' });
+    }
+    res.status(200).send(place);
   } catch (error) {
-      console.error('Error updating place:', error);
-      res.status(500).json({ error: 'Error updating place' });
+    res.status(400).send({ message: 'Error updating place', error });
   }
 };
+
   
 // Get a place by its ID
 const getPlace = async (req, res) => {
@@ -184,17 +181,17 @@ const getAllPlaces = async (req, res) => {
 };
   
 // Get all places of a specific user
-const getPlacesByUserId = async (req, res) => {
+const getPlacesByUserEmail = async (req, res) => {
   try {
-      const { vendor_id } = req.params;
-      const places = await Place.find({ vendor_id });
+      const { vendor_email } = req.params;
+      const places = await Place.find({ vendor_email });
       if (places.length === 0) {
           return res.status(404).json({ message: 'No places found for user' });
       }
       res.json(places);
   } catch (error) {
-      console.error('Error fetching places by user ID:', error);
-      res.status(500).json({ error: 'Error fetching places by user ID' });
+      console.error('Error fetching places by user email:', error);
+      res.status(500).json({ error: 'Error fetching places by user email' });
   }
 };
 
@@ -222,9 +219,6 @@ const searchPlaces = async (req, res) => {
   }
 };
 
-module.exports = { searchPlaces };
-
-
 module.exports = {
   createPlace,
   getPlace,
@@ -234,7 +228,7 @@ module.exports = {
   createMultiplePlaces,
   createPlaceFromGoogleApi,
   createMultiplePlacesFromGoogleApi,
-  getPlacesByUserId,
+  getPlacesByUserEmail,
   deleteMultipleById,
   searchPlaces
 };

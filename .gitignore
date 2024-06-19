@@ -6,3 +6,5 @@ frontend/node_modules/
 
 serviceAccount.json
 serviceAccountKey.json
+
+google-service-account-key.json

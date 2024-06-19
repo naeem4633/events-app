@@ -1,12 +1,38 @@
-import React, { FC } from "react";
+import React, { FC, useRef, useState, useEffect } from "react";
 import Input from "shared/Input/Input";
-import Select from "shared/Select/Select";
 import CommonLayout from "./CommonLayout";
 import FormItem from "./FormItem";
+import GooglePlacesAutocomplete from "components/GooglePlacesAutocomplete"; // Make sure this path is correct
+import { useAddingPlaceContext } from "context/addingPlace"; // Import the AddingPlaceContext
 
 export interface PageAddListing1Props {}
 
 const PageAddListing1: FC<PageAddListing1Props> = () => {
+  const { placeName, setPlaceName, vendorEmail, setVendorEmail, placeId, setPlaceId, websiteUri } = useAddingPlaceContext(); // Use the context
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [suggestions, setSuggestions] = useState<{ description: string, place_id: string }[]>([]);
+
+  const handleSelectPlace = (address: string, id: string) => {
+    setPlaceName(address);
+    setPlaceId(id);
+  };
+
+  useEffect(() => {
+    console.log("websiteUri changed:", websiteUri);
+  }, [websiteUri]);
+
+  useEffect(() => {
+    console.log("Place Name:", placeName);
+  }, [placeName]);
+
+  useEffect(() => {
+    console.log("Vendor Email:", vendorEmail);
+  }, [vendorEmail]);
+
+  useEffect(() => {
+    console.log("Place ID:", placeId);
+  }, [placeId]);
+
   return (
     <CommonLayout
       index="01"
@@ -14,40 +40,41 @@ const PageAddListing1: FC<PageAddListing1Props> = () => {
       nextHref="/add-listing-2"
     >
       <>
-        <h2 className="text-2xl font-semibold">Choosing listing categories</h2>
+        <h2 className="text-2xl font-semibold">Add Listing</h2>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
         {/* FORM */}
         <div className="space-y-8">
-          {/* ITEM */}
-          <FormItem
-            label="Choose a property type"
-            desc="Hotel: Professional hospitality businesses that usually have a unique style or theme defining their brand and decor"
-          >
-            <Select>
-              <option value="Hotel">Hotel</option>
-              <option value="Cottage">Cottage</option>
-              <option value="Villa">Villa</option>
-              <option value="Cabin">Cabin</option>
-              <option value="Farm stay">Farm stay</option>
-              <option value="Houseboat">Houseboat</option>
-              <option value="Lighthouse">Lighthouse</option>
-            </Select>
-          </FormItem>
+          {/* Place Name */}
           <FormItem
             label="Place name"
-            desc="A catchy name usually includes: House name + Room name + Featured property + Tourist destination"
+            desc="Enter the place name using Google Places Autocomplete"
           >
-            <Input placeholder="Places name" />
+            <div className="relative">
+              <Input
+                ref={inputRef}
+                placeholder="Place name"
+                value={placeName}
+                onChange={(e) => setPlaceName(e.target.value)}
+              />
+              <GooglePlacesAutocomplete
+                inputRef={inputRef}
+                onSelect={(address, id) => handleSelectPlace(address, id)}
+                setSuggestions={setSuggestions}
+              />
+            </div>
           </FormItem>
+
+          {/* Vendor Email */}
           <FormItem
-            label="Rental form"
-            desc="Entire place: Guests have the whole place to themselves—there's a private entrance and no shared spaces. A bedroom, bathroom, and kitchen are usually included."
+            label="Vendor email"
+            desc="Enter the vendor email address"
           >
-            <Select>
-              <option value="Hotel">Entire place</option>
-              <option value="Private room">Private room</option>
-              <option value="Share room">Share room</option>
-            </Select>
+            <Input
+              type="email"
+              placeholder="Vendor email"
+              value={vendorEmail}
+              onChange={(e) => setVendorEmail(e.target.value)}
+            />
           </FormItem>
         </div>
       </>

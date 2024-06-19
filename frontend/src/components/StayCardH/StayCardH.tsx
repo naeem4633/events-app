@@ -71,16 +71,16 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
 
   const renderContent = () => {
     return (
-      <div className="flex-grow p-3 sm:p-5 flex flex-col">
+      <div className="flex-grow p-3 sm:p-5 flex flex-col space-y-2">
         <div className="space-y-2">
-          <div className="text-sm text-neutral-500 dark:text-neutral-400">
-            <span>{address}</span>
-          </div>
           <div className="flex items-center space-x-2">
             <h2 className="text-lg font-medium capitalize">
               <span className="line-clamp-1">{name}</span>
             </h2>
           </div>
+        </div>
+        <div className="text-sm text-neutral-500 dark:text-neutral-400">
+          <span>{address}</span>
         </div>
         <div className="hidden sm:block w-14 border-b border-neutral-100 dark:border-neutral-800 my-4"></div>
         {renderTienIch()}
@@ -94,7 +94,7 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
 
   return (
     <div
-      className={`nc-StayCardH group relative bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow will-change-transform ${className}`}
+      className={`nc-StayCardH group relative bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow will-change-transform cursor-pointer ${className}`}
       data-nc-id="StayCardH"
       onClick={handleCardClick}
     >

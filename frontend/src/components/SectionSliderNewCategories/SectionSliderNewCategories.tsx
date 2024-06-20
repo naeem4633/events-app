@@ -4,9 +4,37 @@ import Glide from "@glidejs/glide";
 import { TaxonomyType } from "data/types";
 import CardCategory3 from "components/CardCategory3/CardCategory3";
 import CardCategory4 from "components/CardCategory4/CardCategory4";
-import NextPrev from "shared/NextPrev/NextPrev";
 import CardCategory5 from "components/CardCategory5/CardCategory5";
+import NextPrev from "shared/NextPrev/NextPrev";
 import useNcId from "hooks/useNcId";
+import { useSearchContext } from "context/search";
+
+interface Hall {
+  _id: string;
+  name: string;
+  price_per_head: number;
+  seating_capacity: number;
+  images: string[];
+  place: string;
+}
+
+interface Place {
+  id: string;
+  name: string;
+  address: string;
+  website_uri?: string;
+  google_maps_uri?: string;
+  vendor?: string;
+  seating_capacity?: number;
+  price_per_head?: number;
+  type?: string;
+  rating: number;
+  userRatingCount: number;
+  halls: Hall[];
+  images: string[];
+  google_images: string[]; 
+  featured: boolean;
+}
 
 export interface SectionSliderNewCategoriesProps {
   className?: string;
@@ -20,74 +48,22 @@ export interface SectionSliderNewCategoriesProps {
   uniqueClassName: string;
 }
 
-const DEMO_CATS: TaxonomyType[] = [
-  {
-    id: "1",
-    href: "/listing-stay",
-    name: "Nature House",
-    taxonomy: "category",
-    count: 17288,
-    thumbnail:
-      "https://images.pexels.com/photos/2581922/pexels-photo-2581922.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-  },
-  {
-    id: "2",
-    href: "/listing-stay",
-    name: "Wooden house",
-    taxonomy: "category",
-    count: 2118,
-    thumbnail:
-      "https://images.pexels.com/photos/2351649/pexels-photo-2351649.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  },
-  {
-    id: "3",
-    href: "/listing-stay",
-    name: "Houseboat",
-    taxonomy: "category",
-    count: 36612,
-    thumbnail:
-      "https://images.pexels.com/photos/962464/pexels-photo-962464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  },
-  {
-    id: "4",
-    href: "/listing-stay",
-    name: "Farm House",
-    taxonomy: "category",
-    count: 188288,
-    thumbnail:
-      "https://images.pexels.com/photos/248837/pexels-photo-248837.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  },
-  {
-    id: "5",
-    href: "/listing-stay",
-    name: "Dome House",
-    taxonomy: "category",
-    count: 188288,
-    thumbnail:
-      "https://images.pexels.com/photos/3613236/pexels-photo-3613236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-  },
-  {
-    id: "6",
-    href: "/listing-stay",
-    name: "Dome House",
-    taxonomy: "category",
-    count: 188288,
-    thumbnail:
-      "https://images.pexels.com/photos/3613236/pexels-photo-3613236.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-  },
-];
-
 const SectionSliderNewCategories: FC<SectionSliderNewCategoriesProps> = ({
   heading = "Featured Venues",
   subHeading = "The chosen Venues from us",
   className = "",
   itemClassName = "",
-  categories = DEMO_CATS,
-  itemPerRow = 5,
   categoryCardType = "card3",
+  itemPerRow = 5,
   sliderStyle = "style1",
   uniqueClassName,
 }) => {
+  const { featuredVenues, getFeaturedVenues } = useSearchContext();
+
+  useEffect(() => {
+    getFeaturedVenues();
+  }, [getFeaturedVenues]);
+
   const UNIQUE_CLASS =
     "SectionSliderNewCategories__" + uniqueClassName + useNcId();
 
@@ -124,18 +100,27 @@ const SectionSliderNewCategories: FC<SectionSliderNewCategoriesProps> = ({
     setTimeout(() => {
       MY_GLIDEJS.mount();
     }, 100);
-  }, [MY_GLIDEJS, UNIQUE_CLASS]);
+  }, [MY_GLIDEJS, UNIQUE_CLASS, featuredVenues]);
 
-  const renderCard = (item: TaxonomyType, index: number) => {
+  const renderCard = (item: Place, index: number) => {
+    const taxonomyItem: TaxonomyType = {
+      id: item.id,
+      href: `/listing-stay/${item.id}`,
+      name: item.name,
+      taxonomy: "category",
+      count: item.userRatingCount,
+      thumbnail: item.google_images[0] || item.images[0],
+    };
+
     switch (categoryCardType) {
       case "card3":
-        return <CardCategory3 taxonomy={item} />;
+        return <CardCategory3 taxonomy={taxonomyItem} />;
       case "card4":
-        return <CardCategory4 taxonomy={item} />;
+        return <CardCategory4 taxonomy={taxonomyItem} />;
       case "card5":
-        return <CardCategory5 taxonomy={item} />;
+        return <CardCategory5 taxonomy={taxonomyItem} />;
       default:
-        return <CardCategory3 taxonomy={item} />;
+        return <CardCategory3 taxonomy={taxonomyItem} />;
     }
   };
 
@@ -151,7 +136,7 @@ const SectionSliderNewCategories: FC<SectionSliderNewCategoriesProps> = ({
         </Heading>
         <div className="glide__track" data-glide-el="track">
           <ul className="glide__slides">
-            {categories.map((item, index) => (
+            {featuredVenues.map((item, index) => (
               <li key={index} className={`glide__slide ${itemClassName}`}>
                 {renderCard(item, index)}
               </li>

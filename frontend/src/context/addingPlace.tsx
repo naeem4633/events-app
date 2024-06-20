@@ -27,6 +27,8 @@ interface AddingPlaceContextType {
   rating: number;
   userRatingCount: number;
   googleImages: string[];
+  featured: boolean;
+  setFeatured: (featured: boolean) => void;
   fetchPlaceDetails: (placeId: string) => void;
   createPlace: () => void;
 }
@@ -45,6 +47,7 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
   const [rating, setRating] = useState<number>(0);
   const [userRatingCount, setUserRatingCount] = useState<number>(0);
   const [googleImages, setGoogleImages] = useState<string[]>([]);
+  const [featured, setFeatured] = useState<boolean>(false);
 
   useEffect(() => {
     localStorage.setItem("placeName", placeName);
@@ -90,6 +93,10 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
     localStorage.setItem("googleImages", JSON.stringify(googleImages));
   }, [googleImages]);
 
+  useEffect(() => {
+    localStorage.setItem("featured", JSON.stringify(featured));
+  }, [featured]);
+
   const fetchPlaceDetails = async (placeId: string) => {
     try {
       const response = await axios.get(`${BACKEND_URL}place-details-from-google`, {
@@ -112,10 +119,13 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
 
   const createPlace = async () => {
     try {
+      // Split the placeName by the first comma to get the display name
+      const [displayName, ...addressParts] = placeName.split(',');
+
       const placeResponse = await axios.post(`${BACKEND_URL}placeNormal`, {
         id: placeId,
-        name: placeName,
-        address,
+        name: displayName.trim(), // Use the display name as the name
+        address: placeName, // Use the full placeName as the address
         website_uri: websiteUri,
         google_maps_uri: googleMapsUri,
         vendor_email: vendorEmail,
@@ -125,13 +135,14 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
         userRatingCount,
         google_images: googleImages,
         images,
+        featured,
       });
-  
+
       const place = placeResponse.data;
       console.log("Place created:", place);
-  
+
       const hallIds = [];
-  
+
       for (const hall of halls) {
         try {
           const hallResponse = await axios.post(`${BACKEND_URL}hall`, {
@@ -148,14 +159,14 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
           }
         }
       }
-  
+
       // Update the place with the created hall IDs
       if (hallIds.length > 0) {
         await axios.put(`${BACKEND_URL}places/${place._id}`, {
           halls: hallIds,
         });
       }
-  
+
       console.log("Place and halls created successfully.");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -165,7 +176,6 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
       }
     }
   };
-  
 
   useEffect(() => {
     if (placeId) {
@@ -192,6 +202,8 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
         rating,
         userRatingCount,
         googleImages,
+        featured,
+        setFeatured,
         fetchPlaceDetails,
         createPlace,
       }}

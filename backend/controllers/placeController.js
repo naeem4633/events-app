@@ -1,6 +1,17 @@
 const Place = require('../models/placeModel');
 
-// Create a new place from Google API
+// Get featured venues
+const getFeaturedVenues = async (req, res) => {
+  try {
+    const featuredPlaces = await Place.find({ featured: true }).populate('halls');
+    res.json(featuredPlaces);
+  } catch (error) {
+    console.error('Error fetching featured venues:', error);
+    res.status(500).json({ error: 'Error fetching featured venues' });
+  }
+};
+
+// Existing functions
 const createPlaceFromGoogleApi = async (req, res) => {
   try {
       const { id, vendor_email } = req.body;
@@ -20,7 +31,6 @@ const createPlaceFromGoogleApi = async (req, res) => {
   }
 };
 
-// Create multiple places from Google API
 const createMultiplePlacesFromGoogleApi = async (req, res) => {
   try {
       const { places } = req.body;
@@ -47,7 +57,6 @@ const createMultiplePlacesFromGoogleApi = async (req, res) => {
   }
 };
 
-// Create a new place
 const createPlace = async (req, res) => {
   try {
       const { id, vendor_email } = req.body;
@@ -67,7 +76,6 @@ const createPlace = async (req, res) => {
   }
 };
 
-// Create multiple places
 const createMultiplePlaces = async (req, res) => {
   try {
     const { places } = req.body;
@@ -102,7 +110,6 @@ const createMultiplePlaces = async (req, res) => {
   }
 };
 
-// Delete a place by its ID
 const deletePlace = async (req, res) => {
   try {
     const deletedPlace = await Place.findOneAndDelete({ id: req.params.id });
@@ -138,7 +145,6 @@ const deleteMultipleById = async (req, res) => {
   }
 };
 
-// Update a place by its ID
 const updatePlace = async (req, res) => {
   const { id } = req.params; // Corrected to use 'id'
   const updateData = req.body;
@@ -154,8 +160,6 @@ const updatePlace = async (req, res) => {
   }
 };
 
-  
-// Get a place by its ID
 const getPlace = async (req, res) => {
   try {
     const place = await Place.findOne({ id: req.params.id });
@@ -168,8 +172,7 @@ const getPlace = async (req, res) => {
     res.status(500).json({ error: 'Error fetching place' });
   }
 };
-  
-// Get all places
+
 const getAllPlaces = async (req, res) => {
   try {
     const places = await Place.find();
@@ -179,8 +182,7 @@ const getAllPlaces = async (req, res) => {
     res.status(500).json({ error: 'Error fetching places' });
   }
 };
-  
-// Get all places of a specific user
+
 const getPlacesByUserEmail = async (req, res) => {
   try {
       const { vendor_email } = req.params;
@@ -230,5 +232,6 @@ module.exports = {
   createMultiplePlacesFromGoogleApi,
   getPlacesByUserEmail,
   deleteMultipleById,
-  searchPlaces
+  searchPlaces,
+  getFeaturedVenues 
 };

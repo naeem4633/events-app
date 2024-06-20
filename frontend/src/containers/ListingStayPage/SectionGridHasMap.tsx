@@ -39,7 +39,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             ))}
           </div>
           <div className="flex mt-16 justify-center items-center">
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
 

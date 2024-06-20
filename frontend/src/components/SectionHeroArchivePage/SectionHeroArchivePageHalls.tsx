@@ -1,15 +1,12 @@
-import React, { FC, ReactNode } from "react";
-import imagePng from "images/hero-right2.png";
+import React, { FC } from "react";
 import { useSearchContext } from "context/search";
 
 export interface SectionHeroArchivePageHallsProps {
   className?: string;
-  rightImage?: string;
 }
 
 const SectionHeroArchivePageHalls: FC<SectionHeroArchivePageHallsProps> = ({
   className = "",
-  rightImage = imagePng,
 }) => {
   const { selectedVenue } = useSearchContext();
 
@@ -35,14 +32,15 @@ const SectionHeroArchivePageHalls: FC<SectionHeroArchivePageHallsProps> = ({
             <span className="ml-2.5">{selectedVenue.halls.length} Halls</span>
           </div>
         </div>
-        <div className="flex-grow">
-          <img className="w-full" src={rightImage} alt="hero" />
-        </div>
-      </div>
-
-      <div className="hidden lg:flow-root w-full">
-        <div className="z-10 lg:-mt-40 xl:-mt-56 w-full">
-          {/* Optionally add any other component here */}
+        <div className="flex-grow grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-2 lg:gap-4">
+          {selectedVenue.google_images.slice(0, 3).map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Venue ${index + 1}`}
+              className="object-cover w-full h-48 md:h-64 lg:h-80 rounded-md"
+            />
+          ))}
         </div>
       </div>
     </div>

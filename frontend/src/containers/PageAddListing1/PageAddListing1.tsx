@@ -8,7 +8,7 @@ import { useAddingPlaceContext } from "context/addingPlace"; // Import the Addin
 export interface PageAddListing1Props {}
 
 const PageAddListing1: FC<PageAddListing1Props> = () => {
-  const { placeName, setPlaceName, vendorEmail, setVendorEmail, placeId, setPlaceId, websiteUri } = useAddingPlaceContext(); // Use the context
+  const { placeName, setPlaceName, vendorEmail, setVendorEmail, placeId, setPlaceId, websiteUri, featured, setFeatured } = useAddingPlaceContext(); // Use the context
   const inputRef = useRef<HTMLInputElement>(null);
   const [suggestions, setSuggestions] = useState<{ description: string, place_id: string }[]>([]);
 
@@ -74,6 +74,18 @@ const PageAddListing1: FC<PageAddListing1Props> = () => {
               placeholder="Vendor email"
               value={vendorEmail}
               onChange={(e) => setVendorEmail(e.target.value)}
+            />
+          </FormItem>
+
+          {/* Featured */}
+          <FormItem
+            label="Featured"
+            desc="Mark this place as featured"
+          >
+            <input
+              type="checkbox"
+              checked={featured}
+              onChange={(e) => setFeatured(e.target.checked)}
             />
           </FormItem>
         </div>

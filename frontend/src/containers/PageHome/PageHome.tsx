@@ -132,7 +132,6 @@ function PageHome() {
 
         {/* SECTION 1 */}
         <SectionSliderNewCategories
-          categories={DEMO_CATS}
           uniqueClassName="PageHome_s1"
         />
 

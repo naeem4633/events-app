@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useSearchContext } from "context/search";
 
 interface Hall {
-  _id: string,
+  _id: string;
   name: string;
   price_per_head: number;
   seating_capacity: number;
@@ -18,9 +18,11 @@ interface Place {
   name: string;
   address: string;
   images: string[];
+  google_images: string[];
   rating: number;
   userRatingCount: number;
   halls: Hall[];
+  featured: boolean;
 }
 
 export interface StayCardHProps {
@@ -29,7 +31,7 @@ export interface StayCardHProps {
 }
 
 const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
-  const { images, address, name, id, rating, userRatingCount, halls } = data;
+  const { images, address, name, id, rating, userRatingCount, halls, google_images } = data; // Destructure google_images
   const { selectedVenue, setSelectedVenue } = useSearchContext();
   const navigate = useNavigate();
 
@@ -39,7 +41,7 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
 
   const handleCardClick = () => {
     setSelectedVenue(data);
-    navigate('/listing-stay');
+    navigate("/listing-stay");
   };
 
   const renderSliderGallery = () => {
@@ -47,7 +49,7 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
       <div className="relative flex-shrink-0 w-full md:w-72">
         <GallerySlider
           ratioClass="aspect-w-6 aspect-h-5"
-          galleryImgs={images}
+          galleryImgs={images.length ? images : google_images} // Use google_images if images is empty
           uniqueID={`StayCardH_${id}`}
         />
       </div>
@@ -96,12 +98,13 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
     <div
       className={`nc-StayCardH group relative bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow will-change-transform cursor-pointer ${className}`}
       data-nc-id="StayCardH"
-      onClick={handleCardClick}
+      
     >
-      <div className="absolute inset-0"></div>
       <div className="grid grid-cols-1 md:flex md:flex-row">
         {renderSliderGallery()}
-        {renderContent()}
+        <div onClick={handleCardClick}>
+          {renderContent()}
+        </div>
       </div>
     </div>
   );

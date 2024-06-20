@@ -25,6 +25,8 @@ interface Place {
   userRatingCount: number;
   halls: Hall[];
   images: string[];
+  google_images: string[];
+  featured: boolean; // Added featured field
 }
 
 interface SearchContextType {
@@ -45,6 +47,8 @@ interface SearchContextType {
   setSelectedVenue: (venue: Place | null) => void;
   selectedHall: Hall | null;
   setSelectedHall: (hall: Hall | null) => void;
+  featuredVenues: Place[]; // Added featuredVenues state
+  getFeaturedVenues: () => Promise<void>; // Added getFeaturedVenues function
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -90,6 +94,8 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const storedHall = localStorage.getItem("selectedHall");
     return storedHall ? JSON.parse(storedHall) : null;
   });
+
+  const [featuredVenues, setFeaturedVenues] = useState<Place[]>([]); // Added state for featured venues
 
   const { city, country } = getLocationParts(location);
 
@@ -154,6 +160,16 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setFilteredResults(filtered);
   };
 
+  // Function to get featured venues
+  const getFeaturedVenues = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}featured-places`);
+      setFeaturedVenues(response.data);
+    } catch (error) {
+      console.error('Error fetching featured venues:', error);
+    }
+  };
+
   return (
     <SearchContext.Provider
       value={{
@@ -174,6 +190,8 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedVenue,
         selectedHall,
         setSelectedHall,
+        featuredVenues, // Provide featuredVenues to context
+        getFeaturedVenues, // Provide getFeaturedVenues to context
       }}
     >
       {children}

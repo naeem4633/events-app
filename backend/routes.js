@@ -15,7 +15,8 @@ const {
   createMultiplePlacesFromGoogleApi,
   getPlacesByUserEmail,
   deleteMultipleById,
-  searchPlaces
+  searchPlaces,
+  getFeaturedVenues
 } = require('./controllers/placeController');
 const {
   createVendor,
@@ -51,6 +52,7 @@ router.put('/places/:id', updatePlace);
 router.get('/places/by-user/:user_email', getPlacesByUserEmail);
 router.post('/fetch-places-from-google', fetchPlacesFromGoogle);
 router.get('/place-details-from-google', fetchPlaceDetailsFromGoogle);
+router.get('/featured-places', getFeaturedVenues);
 //search places against search terms in loacl database
 router.post('/search-places', searchPlaces);
 

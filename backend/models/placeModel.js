@@ -19,7 +19,8 @@ const placeSchema = new mongoose.Schema({
         }
     ],
     google_images: { type: [String], default: [] },
-    images: { type: [String], default: [] } 
+    images: { type: [String], default: [] },
+    featured: { type: Boolean, default: false }
 });
 
 const Place = mongoose.model('Place', placeSchema);

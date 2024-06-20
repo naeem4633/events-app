@@ -2,14 +2,21 @@ import React, { FC } from "react";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
 import CommonLayout from "./CommonLayout";
 import { useAddingPlaceContext } from "context/addingPlace";
+import { useNavigate } from "react-router-dom";
 
 export interface PageAddListing10Props {}
 
 const PageAddListing10: FC<PageAddListing10Props> = () => {
   const { createPlace } = useAddingPlaceContext();
+  const navigate = useNavigate()
 
   const handlePublish = async () => {
-    await createPlace();
+    try {
+      await createPlace();
+      navigate('/');
+    } catch (error) {
+      console.error("Error publishing place:", error);
+    }
   };
 
   return (

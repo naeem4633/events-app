@@ -13,9 +13,27 @@ interface Hall {
   place: string;
 }
 
+interface Place {
+  id: string;
+  name: string;
+  address: string;
+  website_uri?: string;
+  google_maps_uri?: string;
+  vendor?: string;
+  seating_capacity?: number;
+  price_per_head?: number;
+  type?: string;
+  rating: number;
+  userRatingCount: number;
+  halls: Hall[];
+  images: string[];
+  google_images: string[];
+  featured: boolean;
+}
+
 interface StayCardProps {
   className?: string;
-  data: Hall;
+  data: Place | Hall;
   size?: "default" | "small";
 }
 
@@ -24,23 +42,38 @@ const StayCard: FC<StayCardProps> = ({
   className = "",
   data,
 }) => {
-  const { _id, name, price_per_head, seating_capacity, images, place } = data;
-  const { setSelectedHall } = useSearchContext();
   const navigate = useNavigate();
+  const { setSelectedHall, setSelectedVenue } = useSearchContext();
+
+  const isPlace = (data: Place | Hall): data is Place => {
+    return (data as Place).rating !== undefined;
+  };
 
   const handleCardClick = () => {
-    setSelectedHall(data);
-    navigate('/listing-stay-detail');
+    if (isPlace(data)) {
+      setSelectedVenue(data);
+      navigate("/listing-stay");
+    } else {
+      setSelectedHall(data);
+      navigate("/listing-stay-detail");
+    }
   };
 
   const renderSliderGallery = () => {
+    const images = isPlace(data) ? (data.google_images?.length ? data.google_images : data.images) : data.images;
     return (
       <div className="relative w-full">
-        <GallerySlider
-          uniqueID={`StayCard_${_id}`}
-          ratioClass="aspect-w-4 aspect-h-3"
-          galleryImgs={images}
-        />
+        {images && images.length > 0 ? (
+          <GallerySlider
+            uniqueID={`StayCard_${isPlace(data) ? data.id : data._id}`}
+            ratioClass="aspect-w-4 aspect-h-3"
+            galleryImgs={images}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p>No images available</p>
+          </div>
+        )}
       </div>
     );
   };
@@ -50,7 +83,7 @@ const StayCard: FC<StayCardProps> = ({
       <div className={size === "default" ? "p-4 space-y-4" : "p-3 space-y-2"}>
         <div className="space-y-2">
           <span className="text-sm text-neutral-500 dark:text-neutral-400">
-            {name}
+            {data.name}
           </span>
           <div className="flex items-center space-x-2">
             <h2
@@ -58,11 +91,11 @@ const StayCard: FC<StayCardProps> = ({
                 size === "default" ? "text-lg" : "text-base"
               }`}
             >
-              <span className="line-clamp-1">{name}</span>
+              <span className="line-clamp-1">{data.name}</span>
             </h2>
           </div>
-          <div className="flex items-center text-neutral-500 dark:text-neutral-400 text-sm space-x-2">
-            {size === "default" && (
+          {isPlace(data) ? (
+            <div className="flex items-center text-neutral-500 dark:text-neutral-400 text-sm space-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -83,14 +116,18 @@ const StayCard: FC<StayCardProps> = ({
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-            )}
-            <span className="">{seating_capacity} guests</span>
-          </div>
+              <StartRating reviewCount={data.userRatingCount} point={data.rating} />
+            </div>
+          ) : (
+            <div className="flex items-center text-neutral-500 dark:text-neutral-400 text-sm space-x-2">
+              <span className="">{data.seating_capacity} guests</span>
+            </div>
+          )}
         </div>
         <div className="w-14 border-b border-neutral-100 dark:border-neutral-800"></div>
         <div className="flex justify-between items-center">
           <span className="text-base font-semibold">
-            ${price_per_head}
+            ${data.price_per_head}
             {` `}
             {size === "default" && (
               <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal">

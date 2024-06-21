@@ -1,6 +1,4 @@
-import Glide from "@glidejs/glide";
-import useNcId from "hooks/useNcId";
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useState, useEffect } from "react";
 import NcImage from "shared/NcImage/NcImage";
 import NextPrev from "shared/NextPrev/NextPrev";
 import { Link } from "react-router-dom";
@@ -20,69 +18,77 @@ const GallerySlider: FC<GallerySliderProps> = ({
   uniqueID = "uniqueID",
   href = "/listing-stay",
 }) => {
-  const UNIQUE_CLASS = `gallerySlider__${uniqueID}` + useNcId();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  let MY_GLIDEJS = useMemo(() => {
-    return new Glide(`.${UNIQUE_CLASS}`, {
-      perView: 1,
-      gap: 0,
-      keyboard: false,
-    });
-  }, [UNIQUE_CLASS]);
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === galleryImgs.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? galleryImgs.length - 1 : prevIndex - 1
+    );
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      MY_GLIDEJS.mount();
-    }, 10);
-  }, [MY_GLIDEJS, UNIQUE_CLASS, galleryImgs]);
+    const interval = setInterval(nextSlide, 3000);
+    return () => clearInterval(interval);
+  }, [galleryImgs.length]);
 
-  const renderDots = () => {
+  if (galleryImgs.length === 0) {
     return (
-      <div
-        className="glide__bullets flex items-center justify-center absolute bottom-2 left-1/2 transform -translate-x-1/2 space-x-1.5"
-        data-glide-el="controls[nav]"
-      >
-        {galleryImgs.map((_, i) => (
-          <button
-            className="glide__bullet w-1.5 h-1.5 rounded-full bg-neutral-300"
-            key={i}
-            data-glide-dir={`=${i}`}
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const renderSliderGallery = () => {
-    return (
-      <div className={`${UNIQUE_CLASS} relative group overflow-hidden`}>
-        <div className="glide__track" data-glide-el="track">
-          <ul className="glide__slides">
-            {galleryImgs.map((item, index) => (
-              <li key={index} className="glide__slide">
-                <Link to={href} className={`block ${ratioClass}`}>
-                  <NcImage src={item} />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* DOTS */}
-        <div className="absolute -bottom-4 inset-x-0 h-10 bg-gradient-to-t from-neutral-900"></div>
-        {renderDots()}
-
-        {/* NAV */}
-        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex top-1/2 transform -translate-y-1/2 inset-x-2 justify-between">
-          <NextPrev className="w-full justify-between" btnClassName="w-8 h-8" />
+      <div className={`nc-GallerySlider ${className}`} data-nc-id="GallerySlider">
+        <div className="relative w-full h-full flex items-center justify-center">
+          <p>No images available</p>
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <div className={`nc-GallerySlider ${className}`} data-nc-id="GallerySlider">
-      {renderSliderGallery()}
+      <div className="relative group overflow-hidden">
+        <div className="flex transition-transform duration-500" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+          {galleryImgs.map((item, index) => (
+            <div key={index} className="w-full flex-shrink-0">
+              <Link to={href} className={`block ${ratioClass}`}>
+                <NcImage src={item} />
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* DOTS */}
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1.5">
+          {galleryImgs.map((_, i) => (
+            <button
+              key={i}
+              className={`w-1.5 h-1.5 rounded-full ${currentIndex === i ? 'bg-neutral-900' : 'bg-neutral-300'}`}
+              onClick={() => setCurrentIndex(i)}
+            />
+          ))}
+        </div>
+
+        {/* NAV */}
+        <div className="absolute top-1/2 transform -translate-y-1/2 left-2">
+          <NextPrev
+            className="justify-start"
+            btnClassName="w-8 h-8"
+            onClickPrev={prevSlide}
+            onlyPrev
+          />
+        </div>
+        <div className="absolute top-1/2 transform -translate-y-1/2 right-2">
+          <NextPrev
+            className="justify-end"
+            btnClassName="w-8 h-8"
+            onClickNext={nextSlide}
+            onlyNext
+          />
+        </div>
+      </div>
     </div>
   );
 };

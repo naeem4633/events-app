@@ -26,7 +26,7 @@ interface Place {
   halls: Hall[];
   images: string[];
   google_images: string[];
-  featured: boolean; // Added featured field
+  featured: boolean;
 }
 
 interface SearchContextType {
@@ -38,7 +38,12 @@ interface SearchContextType {
   setDates: (dates: { startDate: Date | null; endDate: Date | null }) => void;
   searchResults: Place[];
   setSearchResults: (results: Place[]) => void;
-  searchPlaces: () => Promise<void>;
+  searchPlaces: (params?: {
+    location?: string;
+    guests?: number;
+    startDate?: Date | null;
+    endDate?: Date | null;
+  }) => Promise<void>;
   city: string;
   country: string;
   filterResultsByPrice: (minPrice: number, maxPrice: number) => void;
@@ -47,8 +52,10 @@ interface SearchContextType {
   setSelectedVenue: (venue: Place | null) => void;
   selectedHall: Hall | null;
   setSelectedHall: (hall: Hall | null) => void;
-  featuredVenues: Place[]; // Added featuredVenues state
-  getFeaturedVenues: () => Promise<void>; // Added getFeaturedVenues function
+  featuredVenues: Place[];
+  getFeaturedVenues: () => Promise<void>;
+  allVenues: Place[];
+  getAllVenues: () => Promise<void>;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -95,7 +102,8 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return storedHall ? JSON.parse(storedHall) : null;
   });
 
-  const [featuredVenues, setFeaturedVenues] = useState<Place[]>([]); // Added state for featured venues
+  const [featuredVenues, setFeaturedVenues] = useState<Place[]>([]);
+  const [allVenues, setAllVenues] = useState<Place[]>([]);
 
   const { city, country } = getLocationParts(location);
 
@@ -132,24 +140,24 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     localStorage.setItem("selectedHall", JSON.stringify(selectedHall));
   }, [selectedHall]);
 
-  const searchPlaces = async () => {
-    if (!location || !dates.startDate || !dates.endDate || !guests) {
-      alert('Please fill all fields');
-      return;
-    }
-
+  const searchPlaces = async (params?: { location?: string; guests?: number; startDate?: Date | null; endDate?: Date | null }) => {
+    const searchLocation = params?.location || location;
+    const searchGuests = params?.guests !== undefined ? params.guests : guests;
+    const searchStartDate = params?.startDate !== undefined ? params.startDate : dates.startDate;
+    const searchEndDate = params?.endDate !== undefined ? params.endDate : dates.endDate;
+  
     try {
       const response = await axios.post(`${BACKEND_URL}search-places`, {
-        address: location,
-        guests: guests,
-        startDate: dates.startDate.toISOString(),
-        endDate: dates.endDate.toISOString()
+        address: searchLocation,
+        guests: searchGuests,
+        startDate: searchStartDate ? searchStartDate.toISOString() : undefined,
+        endDate: searchEndDate ? searchEndDate.toISOString() : undefined
       });
       setSearchResults(response.data);
     } catch (error) {
       console.error('Error searching for places:', error);
     }
-  };
+  };  
 
   const filterResultsByPrice = (minPrice: number, maxPrice: number) => {
     console.log(`Filtering results by price range: ${minPrice} - ${maxPrice}`);
@@ -160,13 +168,21 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setFilteredResults(filtered);
   };
 
-  // Function to get featured venues
   const getFeaturedVenues = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}featured-places`);
       setFeaturedVenues(response.data);
     } catch (error) {
       console.error('Error fetching featured venues:', error);
+    }
+  };
+
+  const getAllVenues = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}places`);
+      setAllVenues(response.data);
+    } catch (error) {
+      console.error('Error fetching all venues:', error);
     }
   };
 
@@ -190,8 +206,10 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedVenue,
         selectedHall,
         setSelectedHall,
-        featuredVenues, // Provide featuredVenues to context
-        getFeaturedVenues, // Provide getFeaturedVenues to context
+        featuredVenues,
+        getFeaturedVenues,
+        allVenues,
+        getAllVenues,
       }}
     >
       {children}

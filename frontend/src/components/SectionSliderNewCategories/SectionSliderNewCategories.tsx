@@ -1,13 +1,12 @@
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useEffect } from "react";
 import Heading from "components/Heading/Heading";
-import Glide from "@glidejs/glide";
 import { TaxonomyType } from "data/types";
 import CardCategory3 from "components/CardCategory3/CardCategory3";
 import CardCategory4 from "components/CardCategory4/CardCategory4";
 import CardCategory5 from "components/CardCategory5/CardCategory5";
 import NextPrev from "shared/NextPrev/NextPrev";
-import useNcId from "hooks/useNcId";
 import { useSearchContext } from "context/search";
+import { useNavigate } from "react-router-dom";
 
 interface Hall {
   _id: string;
@@ -32,7 +31,7 @@ interface Place {
   userRatingCount: number;
   halls: Hall[];
   images: string[];
-  google_images: string[]; 
+  google_images: string[];
   featured: boolean;
 }
 
@@ -58,96 +57,72 @@ const SectionSliderNewCategories: FC<SectionSliderNewCategoriesProps> = ({
   sliderStyle = "style1",
   uniqueClassName,
 }) => {
-  const { featuredVenues, getFeaturedVenues } = useSearchContext();
+  const { featuredVenues, getFeaturedVenues, setSelectedVenue } = useSearchContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getFeaturedVenues();
   }, [getFeaturedVenues]);
 
-  const UNIQUE_CLASS =
-    "SectionSliderNewCategories__" + uniqueClassName + useNcId();
-
-  let MY_GLIDEJS = useMemo(() => {
-    return new Glide(`.${UNIQUE_CLASS}`, {
-      perView: itemPerRow,
-      gap: 32,
-      bound: true,
-      breakpoints: {
-        1280: {
-          perView: itemPerRow - 1,
-        },
-        1024: {
-          gap: 20,
-          perView: itemPerRow - 1,
-        },
-        768: {
-          gap: 20,
-          perView: itemPerRow - 2,
-        },
-        640: {
-          gap: 20,
-          perView: itemPerRow - 3,
-        },
-        500: {
-          gap: 20,
-          perView: 1.3,
-        },
-      },
-    });
-  }, [UNIQUE_CLASS]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      MY_GLIDEJS.mount();
-    }, 100);
-  }, [MY_GLIDEJS, UNIQUE_CLASS, featuredVenues]);
+  const handleCardClick = (venue: Place) => {
+    setSelectedVenue(venue);
+    navigate("/listing-stay");
+  };
 
   const renderCard = (item: Place, index: number) => {
     const taxonomyItem: TaxonomyType = {
       id: item.id,
-      href: `/listing-stay/${item.id}`,
+      href: `/listing-stay`,
       name: item.name,
       taxonomy: "category",
       count: item.userRatingCount,
       thumbnail: item.google_images[0] || item.images[0],
     };
 
-    switch (categoryCardType) {
-      case "card3":
-        return <CardCategory3 taxonomy={taxonomyItem} />;
-      case "card4":
-        return <CardCategory4 taxonomy={taxonomyItem} />;
-      case "card5":
-        return <CardCategory5 taxonomy={taxonomyItem} />;
-      default:
-        return <CardCategory3 taxonomy={taxonomyItem} />;
-    }
+    const cardComponent = (() => {
+      switch (categoryCardType) {
+        case "card3":
+          return <CardCategory3 taxonomy={taxonomyItem} />;
+        case "card4":
+          return <CardCategory4 taxonomy={taxonomyItem} />;
+        case "card5":
+          return <CardCategory5 taxonomy={taxonomyItem} />;
+        default:
+          return <CardCategory3 taxonomy={taxonomyItem} />;
+      }
+    })();
+
+    return (
+      <div
+        key={index}
+        className={`nc-SectionSliderNewCategories__item ${itemClassName}`}
+        onClick={() => handleCardClick(item)}
+      >
+        {cardComponent}
+      </div>
+    );
   };
 
   return (
     <div className={`nc-SectionSliderNewCategories ${className}`}>
-      <div className={`${UNIQUE_CLASS} flow-root`}>
-        <Heading
-          desc={subHeading}
-          hasNextPrev={sliderStyle === "style1"}
-          isCenter={sliderStyle === "style2"}
-        >
-          {heading}
-        </Heading>
-        <div className="glide__track" data-glide-el="track">
-          <ul className="glide__slides">
-            {featuredVenues.map((item, index) => (
-              <li key={index} className={`glide__slide ${itemClassName}`}>
-                {renderCard(item, index)}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {sliderStyle === "style2" && (
-          <NextPrev className="justify-center mt-16" />
-        )}
+      <Heading
+        desc={subHeading}
+        hasNextPrev={sliderStyle === "style1"}
+        isCenter={sliderStyle === "style2"}
+      >
+        {heading}
+      </Heading>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        {featuredVenues.map((item, index) => (
+          <div key={index} className={`nc-SectionSliderNewCategories__item ${itemClassName}`}>
+            {renderCard(item, index)}
+          </div>
+        ))}
       </div>
+
+      {sliderStyle === "style2" && (
+        <NextPrev className="justify-center mt-16" />
+      )}
     </div>
   );
 };

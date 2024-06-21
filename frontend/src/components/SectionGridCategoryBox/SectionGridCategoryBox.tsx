@@ -1,7 +1,9 @@
+import React from "react";
 import CardCategoryBox1 from "components/CardCategoryBox1/CardCategoryBox1";
 import Heading from "components/Heading/Heading";
 import { TaxonomyType } from "data/types";
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useSearchContext } from "context/search";
 
 export interface SectionGridCategoryBoxProps {
   categories?: TaxonomyType[];
@@ -31,7 +33,7 @@ const DEMO_CATS: TaxonomyType[] = [
       "https://cdn.britannica.com/85/128585-050-5A1BDD02/Karachi-Pakistan.jpg",
   },
   {
-    id: "2",
+    id: "3",
     href: "#",
     name: "Lahore",
     taxonomy: "category",
@@ -40,7 +42,7 @@ const DEMO_CATS: TaxonomyType[] = [
       "https://zameenblog.s3.amazonaws.com/blog/wp-content/uploads/2022/03/Body-2-7-1024x640.jpg",
   },
   {
-    id: "2",
+    id: "4",
     href: "#",
     name: "Multan",
     taxonomy: "category",
@@ -49,7 +51,7 @@ const DEMO_CATS: TaxonomyType[] = [
       "https://www.flydubai.com/en/media/multan_tcm8-6326.jpg",
   },
   {
-    id: "2",
+    id: "5",
     href: "#",
     name: "Faisalabad",
     taxonomy: "category",
@@ -58,7 +60,7 @@ const DEMO_CATS: TaxonomyType[] = [
       "https://img.dunyanews.tv/news/2022/January/01-24-22/news_big_images/638075_32861860.jpg",
   },
   {
-    id: "2",
+    id: "6",
     href: "#",
     name: "Peshawar",
     taxonomy: "category",
@@ -67,7 +69,7 @@ const DEMO_CATS: TaxonomyType[] = [
       "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Islamia_College_Peshawar_2.jpg/220px-Islamia_College_Peshawar_2.jpg",
   },
   {
-    id: "11",
+    id: "7",
     href: "#",
     name: "Rawalpindi",
     taxonomy: "category",
@@ -76,7 +78,7 @@ const DEMO_CATS: TaxonomyType[] = [
       "https://tourism.punjab.gov.pk/system/files/islamabad1.jpg",
   },
   {
-    id: "222",
+    id: "8",
     href: "#",
     name: "Sukkur",
     taxonomy: "category",
@@ -93,7 +95,18 @@ const SectionGridCategoryBox: React.FC<SectionGridCategoryBoxProps> = ({
   className = "",
   gridClassName = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
 }) => {
+  const navigate = useNavigate();
+  const { setLocation, setGuests, setDates, searchPlaces } = useSearchContext();
   let CardComponentName = CardCategoryBox1;
+
+  const handleCardClick = async (city: string) => {
+    setLocation(`${city}, Pakistan`);
+    setGuests(0);
+    setDates({ startDate: null, endDate: null });
+    await searchPlaces();
+    navigate("/listing-stay-map");
+  };
+
   switch (categoryCardType) {
     case "card1":
       CardComponentName = CardCategoryBox1;
@@ -113,7 +126,9 @@ const SectionGridCategoryBox: React.FC<SectionGridCategoryBoxProps> = ({
       </Heading>
       <div className={`grid ${gridClassName} gap-5 sm:gap-6 md:gap-8`}>
         {categories.map((item, i) => (
-          <CardComponentName key={i} taxonomy={item} />
+          <div key={i} onClick={() => handleCardClick(item.name)}>
+            <CardComponentName taxonomy={item} />
+          </div>
         ))}
       </div>
     </div>

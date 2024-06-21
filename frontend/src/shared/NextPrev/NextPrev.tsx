@@ -24,7 +24,6 @@ const NextPrev: FC<NextPrevProps> = ({
     <div
       className={`nc-NextPrev relative flex items-center text-neutral-900 dark:text-neutral-300 ${className}`}
       data-nc-id="NextPrev"
-      data-glide-el="controls"
     >
       {!onlyNext && (
         <button
@@ -33,7 +32,6 @@ const NextPrev: FC<NextPrevProps> = ({
           } bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-6000 dark:hover:border-neutral-500 rounded-full flex items-center justify-center hover:border-neutral-300 ${twFocusClass()}`}
           onClick={onClickPrev}
           title="Prev"
-          data-glide-dir="<"
         >
           <i className="las la-angle-left"></i>
         </button>
@@ -43,7 +41,6 @@ const NextPrev: FC<NextPrevProps> = ({
           className={`${btnClassName} bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-6000 dark:hover:border-neutral-500 rounded-full flex items-center justify-center hover:border-neutral-300 ${twFocusClass()}`}
           onClick={onClickNext}
           title="Next"
-          data-glide-dir=">"
         >
           <i className="las la-angle-right"></i>
         </button>

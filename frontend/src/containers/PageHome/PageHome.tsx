@@ -174,15 +174,15 @@ function PageHome() {
         
         <SectionGridCategoryBox />
 
-        {/* SECTION */}
+        {/* SECTION
         <div className="relative py-16">
           <BackgroundSection />
           <SectionBecomeAnAuthor />
-        </div>
+        </div> */}
 
         <div className="relative py-16">
-          {/* <BackgroundSection /> */}
-          <SectionSubscribe2 /> 
+          <BackgroundSection />
+          <SectionSubscribe2 />
         </div>
         {/* SECTION 1 */}
         {/* <SectionSliderNewCategories

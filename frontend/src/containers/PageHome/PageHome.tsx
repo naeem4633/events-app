@@ -162,27 +162,27 @@ function PageHome() {
         </div> */}
 
         {/* SECTION */}
-        <div className="relative py-16">
-          <BackgroundSection />
-          <SectionSubscribe2 /> 
-        </div>
 
         {/* SECTION */}
-        {/* <div className="relative py-16">
-          <BackgroundSection className="bg-orange-50 dark:bg-black dark:bg-opacity-20 " />
+        <div className="relative py-16">
+          <BackgroundSection className="bg-red-50 dark:bg-black dark:bg-opacity-20 " />
           <SectionGridAuthorBox />
-        </div> */}
+        </div>
 
         {/* SECTION */}
         
         <SectionGridCategoryBox />
 
-        {/* SECTION */}
+        {/* SECTION
         <div className="relative py-16">
           <BackgroundSection />
           <SectionBecomeAnAuthor />
-        </div>
+        </div> */}
 
+        <div className="relative py-16">
+          <BackgroundSection />
+          <SectionSubscribe2 />
+        </div>
         {/* SECTION 1 */}
         {/* <SectionSliderNewCategories
           heading="Explore by types of stays"

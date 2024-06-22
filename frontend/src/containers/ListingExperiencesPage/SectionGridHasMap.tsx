@@ -83,7 +83,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             </div>
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
 
-            <GoogleMapReact
+            {/* <GoogleMapReact
               bootstrapURLKeys={{
                 key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
               }}
@@ -100,7 +100,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
                   experiences={item}
                 />
               ))}
-            </GoogleMapReact>
+            </GoogleMapReact> */}
           </div>
         </div>
       </div>

@@ -96,14 +96,15 @@ const SectionGridCategoryBox: React.FC<SectionGridCategoryBoxProps> = ({
   gridClassName = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
 }) => {
   const navigate = useNavigate();
-  const { setLocation, setGuests, setDates, searchPlaces } = useSearchContext();
+  const { setLocation, setGuests, setDates, setSearchResults, allVenues } = useSearchContext();
   let CardComponentName = CardCategoryBox1;
 
-  const handleCardClick = async (city: string) => {
+  const handleCardClick = (city: string) => {
     setLocation(`${city}, Pakistan`);
     setGuests(0);
     setDates({ startDate: null, endDate: null });
-    await searchPlaces();
+    const filteredVenues = allVenues.filter(venue => venue.address.toLowerCase().includes(city.toLowerCase()));
+    setSearchResults(filteredVenues);
     navigate("/listing-stay-map");
   };
 

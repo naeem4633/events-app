@@ -8,7 +8,6 @@ import LikeSaveBtns from "components/LikeSaveBtns";
 import SectionDateRange from "../SectionDateRange";
 import StayDatesRangeInput from "./StayDatesRangeInput";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Amenities_demos, PHOTOS } from "./constant";
 import { Dialog, Transition } from "@headlessui/react";
 import { ArrowRightIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import ButtonSecondary from "shared/Button/ButtonSecondary";
@@ -22,7 +21,7 @@ import { useSearchContext } from "context/search"; // Import the SearchContext
 
 const StayDetailPageContainer: FC<{}> = () => {
   let [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
-  const { guests, selectedHall } = useSearchContext(); // Get the selected hall from the context
+  const { guests, selectedVenue, selectedHall } = useSearchContext(); // Get the selected hall from the context
 
   const thisPathname = useLocation().pathname;
   const router = useNavigate();
@@ -71,93 +70,6 @@ const StayDetailPageContainer: FC<{}> = () => {
     );
   };
 
-  const renderSection3 = () => {
-    return (
-      <div className="listingSection__wrap">
-        <div>
-          <h2 className="text-2xl font-semibold">Amenities </h2>
-          <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-            {` About the property's amenities and services`}
-          </span>
-        </div>
-        <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 dark:text-neutral-300 ">
-          {Amenities_demos.filter((_, i) => i < 12).map((item) => (
-            <div key={item.name} className="flex items-center space-x-3">
-              <i className={`text-3xl las ${item.icon}`}></i>
-              <span className=" ">{item.name}</span>
-            </div>
-          ))}
-        </div>
-        <div className="w-14 border-b border-neutral-200"></div>
-        <div>
-          <ButtonSecondary onClick={openModalAmenities}>
-            View more 20 amenities
-          </ButtonSecondary>
-        </div>
-        {renderMotalAmenities()}
-      </div>
-    );
-  };
-
-  const renderMotalAmenities = () => {
-    return (
-      <Transition appear show={isOpenModalAmenities} as={Fragment}>
-        <Dialog
-          as="div"
-          className="fixed inset-0 z-50 overflow-y-auto"
-          onClose={closeModalAmenities}
-        >
-          <div className="min-h-screen px-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-40" />
-            </Transition.Child>
-            <span className="inline-block h-screen align-middle" aria-hidden="true">
-              &#8203;
-            </span>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <div className="inline-block py-8 h-screen w-full max-w-4xl">
-                <div className="inline-flex pb-2 flex-col w-full text-left align-middle transition-all transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-900 dark:border dark:border-neutral-700 dark:text-neutral-100 shadow-xl h-full">
-                  <div className="relative flex-shrink-0 px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 text-center">
-                    <h3 className="text-lg font-medium leading-6 text-gray-900" id="headlessui-dialog-title-70">
-                      Amenities
-                    </h3>
-                    <span className="absolute left-3 top-3">
-                      <ButtonClose onClick={closeModalAmenities} />
-                    </span>
-                  </div>
-                  <div className="px-8 overflow-auto text-neutral-700 dark:text-neutral-300 divide-y divide-neutral-200">
-                    {Amenities_demos.filter((_, i) => i < 1212).map((item) => (
-                      <div key={item.name} className="flex items-center py-2.5 sm:py-4 lg:py-5 space-x-5 lg:space-x-8">
-                        <i className={`text-4xl text-neutral-6000 las ${item.icon}`}></i>
-                        <span>{item.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition>
-    );
-  };
 
   const renderSection7 = () => {
     return (
@@ -165,22 +77,21 @@ const StayDetailPageContainer: FC<{}> = () => {
         <div>
           <h2 className="text-2xl font-semibold">Location</h2>
           <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-            Venue Address
+            {selectedVenue?.address}
           </span>
         </div>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700" />
         <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3 ring-1 ring-black/10 rounded-xl z-0">
           <div className="rounded-xl overflow-hidden z-0">
-            {/* If you want to add a map, uncomment and update the following iframe */}
-            {/* <iframe
-              title="x"
+            <iframe
+              title="Venue Location"
               width="100%"
               height="100%"
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${selectedHall.place}`}
-            ></iframe> */}
+              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAlBH0VGo-mLAADyzc0TS1EwgA6yf42Udc&q=${selectedVenue?.map.lat},${selectedVenue?.map.lng}`}
+            ></iframe>
           </div>
         </div>
       </div>
@@ -198,11 +109,11 @@ const StayDetailPageContainer: FC<{}> = () => {
             </span>
           </span>
         </div>
-        <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl ">
+        {/* <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl ">
           <StayDatesRangeInput className="flex-1 z-[11]" />
           <div className="w-full border-b border-neutral-200 dark:border-neutral-700"></div>
           <GuestsInput className="flex-1" />
-        </form>
+        </form> */}
         <div className="flex flex-col space-y-4">
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
             <span>${selectedHall.price_per_head} x {guests} guests</span>
@@ -230,13 +141,13 @@ const StayDetailPageContainer: FC<{}> = () => {
           <div className="col-span-2 row-span-3 sm:row-span-2 relative rounded-md sm:rounded-xl overflow-hidden">
             <img
               className="absolute inset-0 object-cover rounded-md sm:rounded-xl w-full h-full"
-              src={PHOTOS[0]}
+              src={selectedHall.images[0]}
               alt=""
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
             />
             <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
           </div>
-          {PHOTOS.filter((_, i) => i >= 1 && i < 5).map((item, index) => (
+          {selectedHall.images.slice(1, 5).map((item, index) => (
             <div
               key={index}
               className={`relative rounded-md sm:rounded-xl overflow-hidden ${
@@ -246,7 +157,7 @@ const StayDetailPageContainer: FC<{}> = () => {
               <div className="aspect-w-4 aspect-h-3 sm:aspect-w-6 sm:aspect-h-5">
                 <img
                   className="absolute inset-0 object-cover rounded-md sm:rounded-xl w-full h-full"
-                  src={item || ""}
+                  src={item}
                   alt=""
                   sizes="400px"
                 />

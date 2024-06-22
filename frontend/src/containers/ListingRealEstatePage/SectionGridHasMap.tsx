@@ -71,7 +71,7 @@ const SectionGridHasMap: FC<{}> = () => {
             </div>
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
 
-            <GoogleMapReact
+            {/* <GoogleMapReact
               bootstrapURLKeys={{
                 key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
               }}
@@ -79,7 +79,7 @@ const SectionGridHasMap: FC<{}> = () => {
               defaultZoom={12}
             >
               
-            </GoogleMapReact>
+            </GoogleMapReact> */}
           </div>
         </div>
       </div>

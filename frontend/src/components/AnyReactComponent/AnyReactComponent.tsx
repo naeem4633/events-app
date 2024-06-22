@@ -39,7 +39,7 @@ const AnyReactComponent: FC<AnyReactComponentProps> = ({
             : ""
         }`}
       >
-        {listing?.price || experiences?.price || car?.price}
+        {listing?.name}
       </span>
       <Transition
         show={isOpen}

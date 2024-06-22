@@ -6,8 +6,7 @@ import StartRating from "components/StartRating/StartRating";
 import StayCard from "components/StayCard/StayCard";
 import {
   DEMO_CAR_LISTINGS,
-  DEMO_EXPERIENCES_LISTINGS,
-  DEMO_STAY_LISTINGS,
+DEMO_EXPERIENCES_LISTINGS,
 } from "data/listings";
 import React, { FC, Fragment, useState } from "react";
 import Avatar from "shared/Avatar/Avatar";

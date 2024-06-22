@@ -20,7 +20,11 @@ const placeSchema = new mongoose.Schema({
     ],
     google_images: { type: [String], default: [] },
     images: { type: [String], default: [] },
-    featured: { type: Boolean, default: false }
+    featured: { type: Boolean, default: false },
+    map: {
+      lat: { type: Number, required: true, default: 0 },
+      lng: { type: Number, required: true, default: 0 }
+    }
 });
 
 const Place = mongoose.model('Place', placeSchema);

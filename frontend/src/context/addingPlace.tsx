@@ -29,6 +29,8 @@ interface AddingPlaceContextType {
   googleImages: string[];
   featured: boolean;
   setFeatured: (featured: boolean) => void;
+  latitude: number | null;
+  longitude: number | null;
   fetchPlaceDetails: (placeId: string) => void;
   createPlace: () => void;
 }
@@ -48,6 +50,8 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
   const [userRatingCount, setUserRatingCount] = useState<number>(0);
   const [googleImages, setGoogleImages] = useState<string[]>([]);
   const [featured, setFeatured] = useState<boolean>(false);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   useEffect(() => {
     localStorage.setItem("placeName", placeName);
@@ -112,6 +116,8 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
       setRating(result.rating || 0);
       setUserRatingCount(result.user_ratings_total || 0);
       setGoogleImages(result.google_images || []);
+      setLatitude(result.map?.lat || null);
+      setLongitude(result.map?.lng || null);
     } catch (error) {
       console.error("Error fetching place details:", error);
     }
@@ -136,6 +142,10 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
         google_images: googleImages,
         images,
         featured,
+        map: {
+          lat: latitude,
+          lng: longitude,
+        },
       });
 
       const place = placeResponse.data;
@@ -204,6 +214,8 @@ export const AddingPlaceProvider: FC<{ children: ReactNode }> = ({ children }) =
         googleImages,
         featured,
         setFeatured,
+        latitude,
+        longitude,
         fetchPlaceDetails,
         createPlace,
       }}

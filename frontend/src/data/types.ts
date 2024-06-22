@@ -59,32 +59,37 @@ export type TwMainColor =
   | "purple"
   | "gray";
 
-//
-export interface StayDataType {
-  id: string | number;
-  author: AuthorType;
-  date: string;
-  href: string;
-  title: string;
-  featuredImage: string;
-  commentCount: number;
-  viewCount: number;
-  address: string;
-  reviewStart: number;
-  reviewCount: number;
-  like: boolean;
-  galleryImgs: string[];
-  price: string;
-  listingCategory: TaxonomyType;
-  maxGuests: number;
-  bedrooms: number;
-  bathrooms: number;
-  saleOff?: string | null;
-  isAds: boolean | null;
-  map: {
+  interface Hall {
+    _id: string;
+    name: string;
+    price_per_head: number;
+    seating_capacity: number;
+    images: string[];
+    place: string;
+  }
+  
+  interface MapLocation {
     lat: number;
     lng: number;
-  };
+  }
+
+export interface StayDataType {
+  id: string;
+  name: string;
+  address: string;
+  website_uri?: string;
+  google_maps_uri?: string;
+  vendor?: string;
+  seating_capacity?: number;
+  price_per_head?: number;
+  type?: string;
+  rating: number;
+  userRatingCount: number;
+  halls: Hall[];
+  images: string[];
+  google_images: string[];
+  featured: boolean;
+  map: MapLocation;
 }
 
 //

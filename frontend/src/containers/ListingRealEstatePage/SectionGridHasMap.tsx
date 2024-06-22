@@ -1,14 +1,11 @@
 import React, { FC, useState } from "react";
 import GoogleMapReact from "google-map-react";
-import { DEMO_STAY_LISTINGS } from "data/listings";
 import ButtonClose from "shared/ButtonClose/ButtonClose";
 import Checkbox from "shared/Checkbox/Checkbox";
 import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
-import PropertyCardH from "components/PropertyCardH/PropertyCardH";
 
-const DEMO_EXPERIENCES = DEMO_STAY_LISTINGS.filter((_, i) => i < 12);
 
 const SectionGridHasMap: FC<{}> = () => {
   const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
@@ -36,15 +33,7 @@ const SectionGridHasMap: FC<{}> = () => {
             <TabFilters />
           </div>
           <div className="grid grid-cols-1 gap-8">
-            {DEMO_EXPERIENCES.map((item) => (
-              <div
-                key={item.id}
-                onMouseEnter={() => setCurrentHoverID((_) => item.id)}
-                onMouseLeave={() => setCurrentHoverID((_) => -1)}
-              >
-                <PropertyCardH data={item} />
-              </div>
-            ))}
+            
           </div>
           <div className="flex mt-16 justify-center items-center">
             <Pagination />
@@ -88,11 +77,8 @@ const SectionGridHasMap: FC<{}> = () => {
               }}
               yesIWantToUseGoogleMapApiInternals
               defaultZoom={12}
-              defaultCenter={DEMO_EXPERIENCES[0].map}
             >
-              {DEMO_EXPERIENCES.map((item) => (
-                <div></div>
-              ))}
+              
             </GoogleMapReact>
           </div>
         </div>

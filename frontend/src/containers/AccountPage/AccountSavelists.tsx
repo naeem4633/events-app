@@ -5,7 +5,6 @@ import StayCard from "components/StayCard/StayCard";
 import {
   DEMO_CAR_LISTINGS,
   DEMO_EXPERIENCES_LISTINGS,
-  DEMO_STAY_LISTINGS,
 } from "data/listings";
 import React, { Fragment, useState } from "react";
 import ButtonSecondary from "shared/Button/ButtonSecondary";

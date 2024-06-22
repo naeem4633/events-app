@@ -57,7 +57,11 @@ const fetchPlaceDetailsFromGoogle = async (req, res) => {
       url: placeDetails.url || "",
       rating: placeDetails.rating || 0,
       user_ratings_total: placeDetails.user_ratings_total || 0,
-      google_images: (placeDetails.photos || []).map(photo => `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`)
+      google_images: (placeDetails.photos || []).map(photo => `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`),
+      map: {
+        lat: placeDetails.geometry.location.lat,
+        lng: placeDetails.geometry.location.lng
+      }
     };
 
     res.json(place);

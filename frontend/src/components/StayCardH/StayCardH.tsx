@@ -13,6 +13,11 @@ interface Hall {
   place: string;
 }
 
+interface MapLocation {
+  lat: number;
+  lng: number;
+}
+
 interface Place {
   id: string;
   name: string;
@@ -23,6 +28,9 @@ interface Place {
   userRatingCount: number;
   halls: Hall[];
   featured: boolean;
+  latitude?: number;
+  longitude?: number;
+  map: MapLocation;
 }
 
 export interface StayCardHProps {
@@ -31,7 +39,7 @@ export interface StayCardHProps {
 }
 
 const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
-  const { images, address, name, id, rating, userRatingCount, halls, google_images } = data; // Destructure google_images
+  const { images, address, name, id, rating, userRatingCount, halls, google_images } = data;
   const { selectedVenue, setSelectedVenue } = useSearchContext();
   const navigate = useNavigate();
 
@@ -49,7 +57,7 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
       <div className="relative flex-shrink-0 w-full md:w-72">
         <GallerySlider
           ratioClass="aspect-w-6 aspect-h-5"
-          galleryImgs={images.length ? images : google_images} // Use google_images if images is empty
+          galleryImgs={images.length ? images : google_images}
           uniqueID={`StayCardH_${id}`}
         />
       </div>
@@ -98,7 +106,6 @@ const StayCardH: FC<StayCardHProps> = ({ className = "", data }) => {
     <div
       className={`nc-StayCardH group relative bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow will-change-transform cursor-pointer ${className}`}
       data-nc-id="StayCardH"
-      
     >
       <div className="grid grid-cols-1 md:flex md:flex-row">
         {renderSliderGallery()}

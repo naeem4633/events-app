@@ -11,6 +11,11 @@ interface Hall {
   place: string;
 }
 
+interface MapLocation {
+  lat: number;
+  lng: number;
+}
+
 interface Place {
   id: string;
   name: string;
@@ -27,6 +32,9 @@ interface Place {
   images: string[];
   google_images: string[];
   featured: boolean;
+  map: MapLocation;
+  latitude?: number;
+  longitude?: number;
 }
 
 interface SearchContextType {
@@ -147,17 +155,12 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const searchEndDate = params?.endDate !== undefined ? params.endDate : dates.endDate;
   
     try {
-      const response = await axios.post(`${BACKEND_URL}search-places`, {
-        address: searchLocation,
-        guests: searchGuests,
-        startDate: searchStartDate ? searchStartDate.toISOString() : undefined,
-        endDate: searchEndDate ? searchEndDate.toISOString() : undefined
-      });
-      setSearchResults(response.data);
+      const filteredVenues = allVenues.filter(place => place.address.toLowerCase().includes(searchLocation.toLowerCase()));
+      setSearchResults(filteredVenues);
     } catch (error) {
       console.error('Error searching for places:', error);
     }
-  };  
+  };
 
   const filterResultsByPrice = (minPrice: number, maxPrice: number) => {
     console.log(`Filtering results by price range: ${minPrice} - ${maxPrice}`);
@@ -180,7 +183,14 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getAllVenues = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}places`);
-      setAllVenues(response.data);
+      const venuesWithMap = response.data.map((place: any) => ({
+        ...place,
+        map: {
+          lat: place.latitude,
+          lng: place.longitude
+        }
+      }));
+      setAllVenues(venuesWithMap);
     } catch (error) {
       console.error('Error fetching all venues:', error);
     }

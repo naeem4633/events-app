@@ -17,6 +17,11 @@ interface Hall {
   place: string;
 }
 
+interface MapLocation {
+  lat: number;
+  lng: number;
+}
+
 interface Place {
   id: string;
   name: string;
@@ -33,6 +38,7 @@ interface Place {
   images: string[];
   google_images: string[];
   featured: boolean;
+  map: MapLocation;
 }
 
 export interface SectionSliderNewCategoriesProps {

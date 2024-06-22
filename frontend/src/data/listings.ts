@@ -42,21 +42,7 @@ const carsImgs = [
   car16,
 ];
 
-const DEMO_STAY_LISTINGS = __stayListing.map((post, index): StayDataType => {
-  //  ##########  GET CATEGORY BY CAT ID ######## //
-  const category = DEMO_STAY_CATEGORIES.filter(
-    (taxonomy) => taxonomy.id === post.listingCategoryId
-  )[0];
 
-  return {
-    ...post,
-    id: `stayListing_${index}_`,
-    saleOff: !index ? "-20% today" : post.saleOff,
-    isAds: !index ? true : post.isAds,
-    author: DEMO_AUTHORS.filter((user) => user.id === post.authorId)[0],
-    listingCategory: category,
-  };
-});
 
 const DEMO_EXPERIENCES_LISTINGS = __experiencesListing.map(
   (post, index): ExperiencesDataType => {
@@ -93,4 +79,4 @@ const DEMO_CAR_LISTINGS = __carsListing.map((post, index): CarDataType => {
   };
 });
 
-export { DEMO_STAY_LISTINGS, DEMO_EXPERIENCES_LISTINGS, DEMO_CAR_LISTINGS };
+export {  DEMO_EXPERIENCES_LISTINGS, DEMO_CAR_LISTINGS };

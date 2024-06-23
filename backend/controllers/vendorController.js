@@ -66,7 +66,7 @@ async function handleOAuth2Callback(req, res) {
       code: code,
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: 'YOUR_REDIRECT_URI',
+      redirect_uri: process.env.REDIRECT_URI,
       grant_type: 'authorization_code',
     });
 

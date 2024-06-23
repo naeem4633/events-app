@@ -28,7 +28,7 @@ interface Place {
   address: string;
   website_uri?: string;
   google_maps_uri?: string;
-  vendor?: string;
+  vendor_email?: string;
   seating_capacity?: number;
   price_per_head?: number;
   type?: string;
@@ -81,7 +81,7 @@ const SectionSliderNewCategories: FC<SectionSliderNewCategoriesProps> = ({
       href: `/listing-stay`,
       name: item.name,
       taxonomy: "category",
-      count: item.userRatingCount,
+      count: item.rating,
       thumbnail: item.google_images[0] || item.images[0],
     };
 

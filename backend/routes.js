@@ -24,6 +24,9 @@ const {
   updateVendor,
   deleteVendor,
   getAllVendors,
+  fetchCalendarEvents,
+  handleOAuth2Callback,
+  checkIfVendor
 } = require('./controllers/vendorController');
 const {
   createHall,
@@ -62,6 +65,10 @@ router.get('/vendors/:id', getVendor);
 router.get('/vendors', getAllVendors);
 router.put('/vendors/:id', updateVendor);
 router.delete('/vendors/:id', deleteVendor);
+// New routes for OAuth2 and calendar events
+router.get('/vendors/:id/oauth2callback', handleOAuth2Callback);
+router.get('/vendors/:id/calendar-events', fetchCalendarEvents);
+router.post('/vendor/check', checkIfVendor);
 
 // Hall routes
 router.post('/hall', createHall);

@@ -10,6 +10,8 @@ import {
   Auth,
   UserCredential,
 } from 'firebase/auth';
+import axios from 'axios';
+import { BACKEND_URL } from 'backendUrl';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -41,6 +43,7 @@ type FirebaseContextType = {
   sendPasswordResetEmail: (email: string) => Promise<void>;
   getAuth: () => Auth;
   getCurrentUser: () => any;
+  authenticateGoogleCalendarIfVendor: () => Promise<void>;
 };
 
 // Create Firebase context
@@ -61,61 +64,44 @@ type FirebaseProviderProps = {
 };
 
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({ children }) => {
-  const signupUserWithEmailAndPassword = (
+
+  const signupUserWithEmailAndPassword = async (
     email: string,
     password: string
   ): Promise<UserCredential> => {
-    return createUserWithEmailAndPassword(firebaseAuth, email, password)
-      .then((userCredential) => {
-        // Automatically sign in the user after sign-up
-        return signInWithEmailAndPassword(firebaseAuth, email, password)
-          .then((signInUserCredential) => {
-            console.log('User signed in:', signInUserCredential);
-            return signInUserCredential;
-          })
-          .catch((signInError) => {
-            console.error('Error signing in after sign-up:', signInError);
-            throw signInError;
-          });
-      })
-      .catch((error) => {
-        console.error('Error signing up:', error);
-        throw error;
-      });
+    try {
+      const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+      await authenticateGoogleCalendarIfVendor();
+      return userCredential;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const signinWithGoogle = (): Promise<UserCredential> => {
-    return signInWithPopup(firebaseAuth, firebaseGoogleAuthProvider)
-      .then((result) => {
-        console.log(result);
-        return result; // Return the full UserCredential object
-      })
-      .catch((error) => {
-        console.error('Error signing in with Google:', error);
-        throw error;
-      });
+  const signinWithGoogle = async (): Promise<UserCredential> => {
+    try {
+      const result = await signInWithPopup(firebaseAuth, firebaseGoogleAuthProvider);
+      await authenticateGoogleCalendarIfVendor();
+      return result;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const signinUser = (email: string, password: string): Promise<UserCredential> => {
-    console.log("sign in function called");
-    return signInWithEmailAndPassword(firebaseAuth, email, password)
-      .then((userCredential) => {
-        console.log("sign in successful");
-        return userCredential;
-      })
-      .catch((error) => {
-        console.error('Error signing in with email and password:', error);
-        throw error;
-      });
+  const signinUser = async (email: string, password: string): Promise<UserCredential> => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
+      await authenticateGoogleCalendarIfVendor();
+      return userCredential;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleSendPasswordResetEmail = (email: string): Promise<void> => {
     return sendPasswordResetEmail(firebaseAuth, email)
-      .then(() => {
-        console.log('Password reset email sent');
-      })
+      .then(() => {})
       .catch((error) => {
-        console.error('Error sending password reset email:', error);
         throw error;
       });
   };
@@ -128,6 +114,32 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({ children }) 
     return firebaseAuth.currentUser;
   };
 
+  const authenticateGoogleCalendarIfVendor = async () => {
+    const user = getCurrentUser();
+    if (!user) {
+      throw new Error('User is not authenticated');
+    }
+
+    const userEmail = user.email;
+    const userId = user.uid;
+    const userName = user.displayName;
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}vendor/check`, { email: userEmail, firebase_id: userId, name: userName });
+      if (response.data.isVendor) {
+        const authResponse = await axios.get(`${BACKEND_URL}vendors/${response.data.vendorId}/oauth2callback`);
+        if (authResponse.data && authResponse.data.authUrl) {
+          window.location.href = authResponse.data.authUrl;
+        }
+      } else {
+        console.log('User is not a vendor');
+      }
+    } catch (error) {
+      console.error('Error checking if user is a vendor:', error);
+      throw error;
+    }
+  };
+
   const value: FirebaseContextType = {
     signupUserWithEmailAndPassword,
     signinWithGoogle,
@@ -135,6 +147,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({ children }) 
     sendPasswordResetEmail: handleSendPasswordResetEmail,
     getAuth: getAuthInstance,
     getCurrentUser,
+    authenticateGoogleCalendarIfVendor,
   };
 
   return (

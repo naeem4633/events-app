@@ -25,6 +25,7 @@ interface Place {
   images: string[];
   google_images: string[];
   rating: number;
+  vendor_email?: string;
   userRatingCount: number;
   halls: Hall[];
   featured: boolean;

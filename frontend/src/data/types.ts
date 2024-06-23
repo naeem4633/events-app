@@ -79,7 +79,7 @@ export interface StayDataType {
   address: string;
   website_uri?: string;
   google_maps_uri?: string;
-  vendor?: string;
+  vendor_email?: string;
   seating_capacity?: number;
   price_per_head?: number;
   type?: string;

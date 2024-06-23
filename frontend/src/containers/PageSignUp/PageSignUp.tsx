@@ -15,29 +15,25 @@ const PageSignUp: FC<PageSignUpProps> = ({ className = "" }) => {
   const firebase = useFirebase();
   const navigate = useNavigate();
   
-  // State to manage form data
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  // Handle form submission for email/password signup
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     try {
-      // Call Firebase function to create user with email and password
       await firebase.signupUserWithEmailAndPassword(formData.email, formData.password);
       
-      // If successful, you can redirect or perform any other action
       console.log('Signup successful');
+      await firebase.authenticateGoogleCalendarIfVendor(); // Authenticate Google Calendar if vendor
       navigate('/')
     } catch (error: any) {
       console.error('Error signing up with email and password:', error.message);
     }
   };
 
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
@@ -51,7 +47,8 @@ const PageSignUp: FC<PageSignUpProps> = ({ className = "" }) => {
     try {
       await firebase.signinWithGoogle();
       console.log('Login successful');
-      // navigate('/');
+      await firebase.authenticateGoogleCalendarIfVendor(); // Authenticate Google Calendar if vendor
+      navigate('/');
     } catch (error: any) {
       console.error('Error logging in with Google:', error.message);
     }
@@ -82,14 +79,12 @@ const PageSignUp: FC<PageSignUpProps> = ({ className = "" }) => {
               </h3>
             </button>
           </div>
-          {/* OR */}
           <div className="relative text-center">
             <span className="relative z-10 inline-block px-4 font-medium text-sm bg-white dark:text-neutral-400 dark:bg-neutral-900">
               OR
             </span>
             <div className="absolute left-0 w-full top-1/2 transform -translate-y-1/2 border border-neutral-100 dark:border-neutral-800"></div>
           </div>
-          {/* FORM */}
           <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
@@ -119,8 +114,6 @@ const PageSignUp: FC<PageSignUpProps> = ({ className = "" }) => {
             </label>
             <ButtonPrimary type="submit">Continue</ButtonPrimary>
           </form>
-
-          {/* ==== */}
           <span className="block text-center text-neutral-700 dark:text-neutral-300">
             Already have an account? {` `}
             <Link to="/login">Sign in</Link>

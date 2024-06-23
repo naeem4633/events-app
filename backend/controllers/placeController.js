@@ -221,6 +221,7 @@ const searchPlaces = async (req, res) => {
   }
 };
 
+
 module.exports = {
   createPlace,
   getPlace,
